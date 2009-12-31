@@ -1,0 +1,15 @@
+#summary Welcome page for xbTweet.
+#labels Featured,Phase-Requirements,Phase-Design
+
+= Introduction =
+
+xbTweet is an XBMC interface for Twitter.
+It allows you to tweet what you're watching or listening to and also to use your private timeline.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
