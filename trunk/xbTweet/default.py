@@ -263,25 +263,22 @@ except:
 Debug( 'Startup: ' + str(bStartup), True)
 Debug( '::Settings::', True)
 
-##
+#Check for new version
 if __settings__.getSetting( "new_ver" ) == "true":
     import re
     import urllib
-    #if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused	
+    if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused	
     usock = urllib.urlopen(__svn_url__ + "/default.py")
     htmlSource = usock.read()
     usock.close()
 
     version = re.search( "__version__.*?[\"'](.*?)[\"']",  htmlSource, re.IGNORECASE ).group(1)
-    print "SVN Latest Version :[ "+version+"]"
+    Debug ( "SVN Latest Version :[ "+version+"]", True)
     
     if version > __version__:
-            import xbmcgui
-            dialog = xbmcgui.Dialog()
-            
-            selected = dialog.ok("xbTweet v" + str(__version__), "Version "+ str(version)+ " of xbTweet is available" ,"Please use SVN repo Installer or XBMC zone Installer to update " )
-
-##
+        import xbmcgui
+        dialog = xbmcgui.Dialog()
+        selected = dialog.ok("xbTweet v" + str(__version__), "Version "+ str(version)+ " of xbTweet is available" ,"Please check xbmcblog.com for more information" )
 
 FirstTimeMessageOAuth = "Please approve xbTwitter on the following screen."
 FirstTimeMessagePlainAuth = "Please set Twitter account credentials\r\nin the scrip't settings."
