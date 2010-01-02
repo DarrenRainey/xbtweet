@@ -11,10 +11,11 @@ import string
 __scriptname__ = "xbTweet"
 __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com"
-__svn_url__ = ""
+__svn_url__ = "http://xbtweet.googlecode.com/svn/trunk/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.421"
+__version__ = "0.0.422"
 __XBMC_Revision__ = ""
+
 
 def Debug(message, Verbose=True):
     bVerbose = __settings__.getSetting( "debug" )
@@ -261,6 +262,26 @@ except:
     pass
 Debug( 'Startup: ' + str(bStartup), True)
 Debug( '::Settings::', True)
+
+##
+if __settings__.getSetting( "new_ver" ) == "true":
+    import re
+    import urllib
+    #if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused	
+    usock = urllib.urlopen(__svn_url__ + "/default.py")
+    htmlSource = usock.read()
+    usock.close()
+
+    version = re.search( "__version__.*?[\"'](.*?)[\"']",  htmlSource, re.IGNORECASE ).group(1)
+    print "SVN Latest Version :[ "+version+"]"
+    
+    if version > __version__:
+            import xbmcgui
+            dialog = xbmcgui.Dialog()
+            
+            selected = dialog.ok("xbTweet v" + str(__version__), "Version "+ str(version)+ " of xbTweet is available" ,"Please use SVN repo Installer or XBMC zone Installer to update " )
+
+##
 
 FirstTimeMessageOAuth = "Please approve xbTwitter on the following screen."
 FirstTimeMessagePlainAuth = "Please set Twitter account credentials\r\nin the scrip't settings."
