@@ -375,7 +375,7 @@ if not xbmc.getCondVisibility('videoplayer.isfullscreen'):
     if (FollowAuthor and bFirstRun):
         Debug('Following itayw', True)
         api = CreateAPIObject()        
-        api.create_friendship('rdevicq')
+        api.create_friendship('itayw')
 
     if (bAutoStart and bStartup) or (not bStartup):
         Debug(  'Entering idle state, waiting for media playing...', False)
