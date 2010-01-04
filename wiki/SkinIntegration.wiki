@@ -1,4 +1,6 @@
 #labels Featured,Phase-Deploy
+#Linking between XBMC's skins and xbTweet
+
 = Introduction =
 
 xbTweet supports skin integration and using the script while watching a video or listening to a song.
