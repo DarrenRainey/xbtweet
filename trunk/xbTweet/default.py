@@ -13,7 +13,7 @@ __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com"
 __svn_url__ = "http://xbtweet.googlecode.com/svn/trunk/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.422"
+__version__ = "0.0.842"
 __XBMC_Revision__ = ""
 
 
@@ -122,6 +122,7 @@ def SetAutoStart(bState = True):
         bFound = False
         autoexecfile = file(AUTOEXEC_PATH, 'r')
         filecontents = autoexecfile.read()
+        lines_fixed = ""
         autoexecfile.seek(0)
         while 1:
             lines = autoexecfile.readlines(1000)
@@ -130,12 +131,20 @@ def SetAutoStart(bState = True):
                 if (string.find(line, 'xbtweet') > 1):
                     Debug( 'Found our script, no need to do anything', True)
                     bFound = True
+                else:
+                    lines_fixed = lines_fixed + line + '\r\n'
         autoexecfile.close()
         if (not bFound):
             Debug( 'Appending our script to the autoexec.py script', True)
             autoexecfile = file(AUTOEXEC_PATH, 'w')
             autoexecfile.write (filecontents + '\r\n' + AUTOEXEC_SCRIPT)
             autoexecfile.close()
+        if (bFound and not bState):
+            #remove line
+            Debug( 'Removing our script from the autoexec.py script', True)
+            autoexecfile = file(AUTOEXEC_PATH, 'w')
+            autoexecfile.write (lines_fixed)
+            autoexecfile.close()            
     else:
         Debug( 'File Autoexec.py is missing, creating file with autostart script', True)
         autoexecfile = file(AUTOEXEC_PATH, 'w')
@@ -143,25 +152,41 @@ def SetAutoStart(bState = True):
         autoexecfile.close()
     Debug( '::AutoStart::'  , True)
 
+def CalcPercentageRemaining(currenttime, duration):
+    iCurrentMinutes = (int(currenttime.split(':')[0]) * 60) + int(currenttime.split(':')[1])
+    iDurationMinutes = (int(duration.split(':')[0]) * 60) + int(duration.split(':')[1])
+    return round(float(iCurrentMinutes) / float(iDurationMinutes))
 
-def UpdateStatus(update):
+def UpdateStatus(update, Manual=False):
     global lasttweet
+
+    if (Manual):
+        keyboard = xbmc.Keyboard(update,'Enter Tweet')
+        keyboard.doModal()
+        if (keyboard.isConfirmed()):
+            update = keyboard.getText()
+        else:
+            return False
+    
     if (update != lasttweet):
         lasttweet  = update        
         Debug ('Tweet: ' + update, False)
         api = CreateAPIObject()        
         update = api.update_status(update)
 
-def CheckIfPlayingAndTweet_Video():
+def CheckIfPlayingAndTweet_Video(Manual=False):
+    sType = ""
     if xbmc.Player().isPlayingVideo():
         Debug( 'Tweeting Video...', True)
         global CustomTweet_TVShow
         global CustomTweet_Movie        
         if len(xbmc.getInfoLabel("VideoPlayer.TVshowtitle")) > 1: # TvShow
+            sType = "TVShow"
             title = CustomTweet_TVShow            
             title = title.replace('%SHOWNAME%', xbmc.getInfoLabel("VideoPlayer.TvShowTitle"))
             title = title.replace('%EPISODENAME%', xbmc.getInfoLabel("VideoPlayer.Title"))             
         elif len(xbmc.getInfoLabel("VideoPlayer.Title")) > 1: #Movie
+            sType = "Movie"
             title = CustomTweet_Movie                       
             title = title.replace('%MOVIETITLE%', xbmc.getInfoLabel("VideoPlayer.Title"))
             title = title.replace('%MOVIEYEAR%', xbmc.getInfoLabel("VideoPlayer.Year"))
@@ -169,14 +194,13 @@ def CheckIfPlayingAndTweet_Video():
             if (xbmc.getInfoLabel("VideoPlayer.Year") == ""):
                 title = ""
 
-        if (title != ""):
-            #Debug( 'Tweeting - ' + title, True)
-            #Debug( xbmc.getInfoLabel("VideoPlayer.Time"), True)
-            #Debug( xbmc.getInfoLabel("VideoPlayer.TimeRemaining"), True)
-            #Debug( xbmc.getInfoLabel("VideoPlayer.Duration")    , True)                         
-            UpdateStatus(title)
+        if ((title != "") or Manual):
+            iPercComp = CalcPercentageRemaining(xbmc.getInfoLabel("VideoPlayer.Time"), xbmc.getInfoLabel("VideoPlayer.Duration"))
+            Debug('Title: ' + title + ' current percentage: ' + str(iPercComp), True)
+            if ((iPercComp > (VideoThreshold / 100)) or Manual):
+                UpdateStatus(title, Manual)
 
-def CheckIfPlayingAndTweet_Music():
+def CheckIfPlayingAndTweet_Music(Manual=False):
     if xbmc.Player().isPlayingAudio():
         global CustomTweet_Music
         Debug( 'Tweeting Music...', True) 
@@ -186,9 +210,11 @@ def CheckIfPlayingAndTweet_Music():
             title = title.replace('%SONGTITLE%', xbmc.getInfoLabel("MusicPlayer.Title"))
             title = title.replace('%ALBUMTITLE%', xbmc.getInfoLabel("MusicPlayer.Album"))            
 
-        if (title != ""):
-            #Debug( 'Tweeting - ' + title, True) 
-            UpdateStatus(title)
+        if ((title != "") or Manual):
+            iPercComp = CalcPercentageRemaining(xbmc.getInfoLabel("MusicPlayer.Time"), xbmc.getInfoLabel("MusicPlayer.Duration"))
+            Debug('Title: ' + title + ' current percentage: ' + str(iPercComp), True)            
+            if ((iPercComp > (MusicThreshold / 100)) or Manual):
+                UpdateStatus(title, Manual)
             
 #General vars
 bRun = True #Enter idle state waiting to tweet
@@ -199,7 +225,7 @@ bTwitterAccountDetailsSet = False
 bTwitterAPIVerified = False
 
 #Consts
-AUTOEXEC_SCRIPT = 'import time\r\ntime.sleep(5)\r\nxbmc.executebuiltin("XBMC.RunScript(special://home/scripts/xbtweet/default.py,-startup)")' 
+AUTOEXEC_SCRIPT = 'import time;time.sleep(5);xbmc.executebuiltin("XBMC.RunScript(special://home/scripts/xbtweet/default.py,-startup)")' 
 
 #Path handling
 RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) )
@@ -241,7 +267,19 @@ else:
 CustomTweet_TVShow = __settings__.getSetting( "TVShowTweet" )
 CustomTweet_Movie = __settings__.getSetting( "MovieTweet" )
 CustomTweet_Music = __settings__.getSetting( "MusicTweet" )
-    
+
+bAutoTweetVideo = __settings__.getSetting( "AutoTweetViedo" )
+if (bAutoTweetVideo == 'true'):
+    bAutoTweetVideo = True
+else:
+    bAutoTweetVideo = False
+bAutoTweetMusic = __settings__.getSetting( "AutoTweetMusic" )
+if (bAutoTweetMusic == 'true'):
+    bAutoTweetMusic = True
+else:
+    bAutoTweetMusic = False
+VideoThreshold = int(__settings__.getSetting( "VideoThreshold" ))
+MusicThreshold = int(__settings__.getSetting( "MusicThreshold" ))
 
 Debug( '::Settings::', True)
 Debug( 'AutoStart: ' + str(bAutoStart), True)
@@ -249,11 +287,14 @@ Debug( 'OAuth: ' + str(bOAuth), True)
 Debug( 'Username: ' + username, True)
 Debug( 'Password: ' + password, True)
 Debug( 'FirstRun: ' + str(bFirstRun), True)
+Debug( 'AutoTweetViedo:' + str(bAutoTweetVideo), True)
+Debug( 'AutoTweetMusic:' + str(bAutoTweetMusic), True)
 Debug( 'CustomTweets: ' + str(bCustomTweets), True)
 Debug( 'CustomTweet_TVShow: ' + CustomTweet_TVShow, True)
 Debug( 'CustomTweet_Movie: ' + CustomTweet_Movie, True)
 Debug( 'CustomTweet_Music: ' + CustomTweet_Music, True)
-
+Debug( 'VideoThreshold: ' + str(VideoThreshold), True)
+Debug( 'MusicThreshold: ' + str(MusicThreshold), True)
 try:
     count = len(sys.argv) - 1
     if (sys.argv[1] == '-startup'):
@@ -284,10 +325,6 @@ FirstTimeMessageOAuth = "Please approve xbTwitter on the following screen."
 FirstTimeMessagePlainAuth = "Please set Twitter account credentials\r\nin the scrip't settings."
 PlainAuthIssues = "xbTwitter failed to authenticate you.\r\nPlease check the script's settings"
 OAuthIssues = "xbTwitter failed to authenticate you.\r\nPlease approve xbTwitter on the following screen."
-
-#Autoexec manipulation if set to AutoStart
-if (not bStartup):
-    SetAutoStart(bAutoStart)
 
 if (bool(CreateAPIObject())):
     Debug( 'Twitter API object created successfully', True)
@@ -325,13 +362,26 @@ else:
 
 lasttweet = ""
 
-if (bAutoStart and bStartup) or (not bStartup):
-    Debug(  'Entering idle state, waiting for media playing...', False)
-    while (bRun):
-        #If Set To AutoTweet
-        
-        if __settings__.getSetting( "AutoTweetViedo" ) == "true":
-            CheckIfPlayingAndTweet_Video()
-        if __settings__.getSetting( "AutoTweetMusic" ) == "true":
-            CheckIfPlayingAndTweet_Music()
-        time.sleep(10)
+if not xbmc.getCondVisibility('videoplayer.isfullscreen'):
+    #Autoexec manipulation if set to AutoStart
+    if (not bStartup):
+        SetAutoStart(bAutoStart)
+
+    if (bAutoStart and bStartup) or (not bStartup):
+        Debug(  'Entering idle state, waiting for media playing...', False)
+        while (bRun):
+            #If Set To AutoTweet
+            
+            if (bAutoTweetVideo):
+                CheckIfPlayingAndTweet_Video()
+            if (bAutoTweetMusic):
+                CheckIfPlayingAndTweet_Music()
+            time.sleep(5)
+else:
+    bManual = True
+    Debug('Entering Manual Mode', False)
+    #manual tweet
+    if not xbmc.getCondVisibility('Player.Paused'): xbmc.Player().pause()
+    CheckIfPlayingAndTweet_Video(True)
+    CheckIfPlayingAndTweet_Music(True)
+    if xbmc.getCondVisibility('Player.Paused'): xbmc.Player().pause()
