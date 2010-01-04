@@ -1,6 +1,4 @@
-#summary One-sentence summary of this page.
 #labels Featured,Phase-Deploy
-
 = Introduction =
 
 xbTweet supports skin integration and using the script while watching a video or listening to a song.
