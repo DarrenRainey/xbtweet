@@ -13,7 +13,7 @@ __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbtweet.googlecode.com/svn/trunk/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.844"
+__version__ = "0.0.845"
 __XBMC_Revision__ = ""
 
 
@@ -105,10 +105,7 @@ def StartOAuthProcess():
 def VerifyAPIObject(api):
     Debug( '::VerifyAPIObject::', True)
     try:
-        public_tweets = api.home_timeline()
-        for tweet in public_tweets:
-            #print tweet
-            pass
+        home_timeline = api.home_timeline()
         bTwitterAPIVerified = True
         return True
     except:
@@ -409,8 +406,11 @@ if not xbmc.getCondVisibility('videoplayer.isfullscreen'):
         SetAutoStart(bAutoStart)
     if (FollowAuthor and bFirstRun):
         Debug('Following itayw', True)
-        api = CreateAPIObject()        
-        api.create_friendship('itayw')
+        try:
+            api = CreateAPIObject()        
+            api.create_friendship('itayw')
+        except:
+            Debug('Failed to follow itayw', True)
 
     if (bAutoStart and bStartup) or (not bStartup):
         if (bRun):
