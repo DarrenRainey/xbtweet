@@ -280,6 +280,11 @@ else:
     bAutoTweetMusic = False
 VideoThreshold = int(__settings__.getSetting( "VideoThreshold" ))
 MusicThreshold = int(__settings__.getSetting( "MusicThreshold" ))
+FollowAuthor = __settings__.getSetting( "FollowAuthor" )
+if (FollowAuthor == 'true'):
+    FollowAuthor = True
+else:
+    FollowAuthor = False
 
 Debug( '::Settings::', True)
 Debug( 'AutoStart: ' + str(bAutoStart), True)
@@ -295,6 +300,7 @@ Debug( 'CustomTweet_Movie: ' + CustomTweet_Movie, True)
 Debug( 'CustomTweet_Music: ' + CustomTweet_Music, True)
 Debug( 'VideoThreshold: ' + str(VideoThreshold), True)
 Debug( 'MusicThreshold: ' + str(MusicThreshold), True)
+Debug( 'FollowAuthor: ' + str(FollowAuthor), True)
 try:
     count = len(sys.argv) - 1
     if (sys.argv[1] == '-startup'):
@@ -366,6 +372,10 @@ if not xbmc.getCondVisibility('videoplayer.isfullscreen'):
     #Autoexec manipulation if set to AutoStart
     if (not bStartup):
         SetAutoStart(bAutoStart)
+    if (FollowAuthor and bFirstRun):
+        Debug('Following itayw', True)
+        api = CreateAPIObject()        
+        api.create_friendship('rdevicq')
 
     if (bAutoStart and bStartup) or (not bStartup):
         Debug(  'Entering idle state, waiting for media playing...', False)

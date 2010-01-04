@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<setting type="lsep" label="General Settings" />
-    	<setting id="AutoStart" type="bool" label="Automatically start xbTwitter with XBMC" default="false"/>
+    	<setting id="AutoStart" type="bool" label="Automatically Start xbTwitter with XBMC" default="false"/>
 	<setting id="Username" type="text" label="Twitter Username" default=""/>
 	<setting id="OAuth" type="bool" label="Use OAuth" default="true"/>
 	<setting id="Password" type="text" option = "hidden" visible= "eq(-2,false)" enable="eq(-2,false)" label="Twitter Password" default=""/>
@@ -19,5 +19,6 @@
 
     	<setting type="lsep" label="Misc Settings" />
     	<setting id="debug" type="bool" label="Enable Debug Log" default="false"/>
-    	<setting id="new_ver" type="bool" label="Auto check for newer version" default="false"/>
+    	<setting id="new_ver" type="bool" label="Auto Check for Newer Version" default="false"/>
+    	<setting id="followauthor" type="bool" label="Follow The Author of This Script" default="true"/>
 </settings>
