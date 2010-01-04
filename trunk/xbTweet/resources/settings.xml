@@ -13,9 +13,9 @@
 	<setting id="MusicThreshold" type="enum"  visible= "eq(-1,true)" enable="eq(-1,true)" label="Tweet only after I listened to this percentage of the song" values="1|5|15|50|75|95" default="3"/>
 
 	<setting id="CustomTweet" type="bool" label="Customize Automatic Tweets" default="false"/>
-	<setting id="TVShowTweet" type="text"  visible= "eq(-1,true)" enable="eq(-1,true)" label="TV Shows Tweet																	" default="Watching %SHOWNAME%, Episode: %EPISODENAME% on #xbmc #xbtweet"/>
-	<setting id="MovieTweet" type="text"  visible= "eq(-2,true)" enable="eq(-2,true)" label="Movies Tweet" default="Watching %MOVIETITLE% (%MOVIEYEAR%) on #xbmc #xbtweet"/>
-	<setting id="MusicTweet" type="text"  visible= "eq(-3,true)" enable="eq(-3,true)" label="Music Tweet																				" default="Listening to %ARTISTNAME% (%ALBUMTITLE%) on #xbmc #xbtweet"/>
+	<setting id="TVShowTweet" type="text"  visible= "eq(-1,true)" enable="eq(-1,true)" label="TV Shows Tweet																	" default="Watching %SHOWNAME%, Episode: %EPISODENAME% on #xbmc #xbtweet #nowplaying"/>
+	<setting id="MovieTweet" type="text"  visible= "eq(-2,true)" enable="eq(-2,true)" label="Movies Tweet" default="Watching %MOVIETITLE% (%MOVIEYEAR%) on #xbmc #xbtweet #nowplaying"/>
+	<setting id="MusicTweet" type="text"  visible= "eq(-3,true)" enable="eq(-3,true)" label="Music Tweet																				" default="Listening to %ARTISTNAME% (%ALBUMTITLE%) on #xbmc #xbtweet #nowplaying"/>
 
     	<setting type="lsep" label="Misc Settings" />
     	<setting id="debug" type="bool" label="Enable Debug Log" default="false"/>

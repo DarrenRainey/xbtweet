@@ -10,10 +10,10 @@ import string
 
 __scriptname__ = "xbTweet"
 __author__ = "Itay Weinberger"
-__url__ = "http://www.xbmcblog.com"
+__url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbtweet.googlecode.com/svn/trunk/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.842"
+__version__ = "0.0.844"
 __XBMC_Revision__ = ""
 
 
@@ -102,11 +102,12 @@ def StartOAuthProcess():
     Debug( '::StartOAuthProcess::', True)
     return CreateAPIObject()   
 
-def VerifyAPIObject():
+def VerifyAPIObject(api):
     Debug( '::VerifyAPIObject::', True)
     try:
-        public_tweets = api.public_timeline()
+        public_tweets = api.home_timeline()
         for tweet in public_tweets:
+            #print tweet
             pass
         bTwitterAPIVerified = True
         return True
@@ -155,7 +156,7 @@ def SetAutoStart(bState = True):
 def CalcPercentageRemaining(currenttime, duration):
     iCurrentMinutes = (int(currenttime.split(':')[0]) * 60) + int(currenttime.split(':')[1])
     iDurationMinutes = (int(duration.split(':')[0]) * 60) + int(duration.split(':')[1])
-    return round(float(iCurrentMinutes) / float(iDurationMinutes))
+    return float(iCurrentMinutes) / float(iDurationMinutes) 
 
 def UpdateStatus(update, Manual=False):
     global lasttweet
@@ -171,15 +172,19 @@ def UpdateStatus(update, Manual=False):
     if (update != lasttweet):
         lasttweet  = update        
         Debug ('Tweet: ' + update, False)
-        api = CreateAPIObject()        
-        update = api.update_status(update)
+        api = CreateAPIObject()
+        if (VerifyAPIObject(api)):
+            update = api.update_status(update)
+        else:
+            print 'failed'
 
 def CheckIfPlayingAndTweet_Video(Manual=False):
     sType = ""
     if xbmc.Player().isPlayingVideo():
         Debug( 'Tweeting Video...', True)
         global CustomTweet_TVShow
-        global CustomTweet_Movie        
+        global CustomTweet_Movie
+        global VideoThreshold
         if len(xbmc.getInfoLabel("VideoPlayer.TVshowtitle")) > 1: # TvShow
             sType = "TVShow"
             title = CustomTweet_TVShow            
@@ -203,6 +208,7 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
 def CheckIfPlayingAndTweet_Music(Manual=False):
     if xbmc.Player().isPlayingAudio():
         global CustomTweet_Music
+        global MusicThreshold
         Debug( 'Tweeting Music...', True) 
         title = CustomTweet_Music
         if len(xbmc.getInfoLabel("MusicPlayer.Title")) > 1: # Song
@@ -212,7 +218,7 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
 
         if ((title != "") or Manual):
             iPercComp = CalcPercentageRemaining(xbmc.getInfoLabel("MusicPlayer.Time"), xbmc.getInfoLabel("MusicPlayer.Duration"))
-            Debug('Title: ' + title + ' current percentage: ' + str(iPercComp), True)            
+            Debug('Title: ' + title + ' current percentage: ' + str(iPercComp), True)
             if ((iPercComp > (MusicThreshold / 100)) or Manual):
                 UpdateStatus(title, Manual)
             
@@ -223,7 +229,7 @@ lasttweet = ""
 #Twitter API related vars
 bTwitterAccountDetailsSet = False
 bTwitterAPIVerified = False
-
+ 
 #Consts
 AUTOEXEC_SCRIPT = 'import time;time.sleep(5);xbmc.executebuiltin("XBMC.RunScript(special://home/scripts/xbtweet/default.py,-startup)")' 
 
@@ -243,7 +249,6 @@ _ = sys.modules[ "__main__" ].__language__
 __settings__ = xbmc.Settings( path=os.getcwd() )
 
 Debug('----------- ' + __scriptname__ + ' by ' + __author__ + ', version ' + __version__ + ' -----------', False)
-
 
 username = __settings__.getSetting( "Username" )
 password = __settings__.getSetting( "Password" )
@@ -279,7 +284,33 @@ if (bAutoTweetMusic == 'true'):
 else:
     bAutoTweetMusic = False
 VideoThreshold = int(__settings__.getSetting( "VideoThreshold" ))
+if (VideoThreshold == 0):
+    VideoThreshold = 1
+elif (VideoThreshold == 1):
+    VideoThreshold = 5
+elif (VideoThreshold == 2):
+    VideoThreshold = 15
+elif (VideoThreshold == 3):
+    VideoThreshold = 50
+elif (VideoThreshold == 4):
+    VideoThreshold = 75
+elif (VideoThreshold == 5):
+    VideoThreshold = 95
+    
 MusicThreshold = int(__settings__.getSetting( "MusicThreshold" ))
+if (MusicThreshold == 0):
+    MusicThreshold = 1
+elif (MusicThreshold == 1):
+    MusicThreshold = 5
+elif (MusicThreshold == 2):
+    MusicThreshold = 15
+elif (MusicThreshold == 3):
+    MusicThreshold = 50
+elif (MusicThreshold == 4):
+    MusicThreshold = 75
+elif (MusicThreshold == 5):
+    MusicThreshold = 95
+
 FollowAuthor = __settings__.getSetting( "FollowAuthor" )
 if (FollowAuthor == 'true'):
     FollowAuthor = True
@@ -312,27 +343,31 @@ Debug( '::Settings::', True)
 
 #Check for new version
 if __settings__.getSetting( "new_ver" ) == "true":
-    import re
-    import urllib
-    if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused	
-    usock = urllib.urlopen(__svn_url__ + "/default.py")
-    htmlSource = usock.read()
-    usock.close()
+    try:
+        import re
+        import urllib
+        if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused	
+        usock = urllib.urlopen(__svn_url__ + "/default.py")
+        htmlSource = usock.read()
+        usock.close()
 
-    version = re.search( "__version__.*?[\"'](.*?)[\"']",  htmlSource, re.IGNORECASE ).group(1)
-    Debug ( "SVN Latest Version :[ "+version+"]", True)
-    
-    if version > __version__:
-        import xbmcgui
-        dialog = xbmcgui.Dialog()
-        selected = dialog.ok("xbTweet v" + str(__version__), "Version "+ str(version)+ " of xbTweet is available" ,"Please check xbmcblog.com for more information" )
-
+        version = re.search( "__version__.*?[\"'](.*?)[\"']",  htmlSource, re.IGNORECASE ).group(1)
+        Debug ( "SVN Latest Version :[ "+version+"]", True)
+        
+        if version > __version__:
+            import xbmcgui
+            dialog = xbmcgui.Dialog()
+            selected = dialog.ok("xbTweet v" + str(__version__), "Version "+ str(version)+ " of xbTweet is available" ,"Please check xbmcblog.com for more information" )
+    except:
+        print 'Exception in reading SVN'
+        
 FirstTimeMessageOAuth = "Please approve xbTwitter on the following screen."
 FirstTimeMessagePlainAuth = "Please set Twitter account credentials\r\nin the scrip't settings."
 PlainAuthIssues = "xbTwitter failed to authenticate you.\r\nPlease check the script's settings"
 OAuthIssues = "xbTwitter failed to authenticate you.\r\nPlease approve xbTwitter on the following screen."
 
-if (bool(CreateAPIObject())):
+api = CreateAPIObject()
+if (bool(api)):
     Debug( 'Twitter API object created successfully', True)
 else:
     Debug( 'Failed to create Twitter API object', True)
@@ -353,7 +388,7 @@ else:
         dialog.ok("xbTwitter", PlainAuthIssues)
         bRun = False
 
-if (VerifyAPIObject()):
+if (VerifyAPIObject(api)):
     Debug( 'Twitter API object verified', True)
 else:
     Debug( 'Failed to verify Twitter API object', True)
@@ -378,15 +413,15 @@ if not xbmc.getCondVisibility('videoplayer.isfullscreen'):
         api.create_friendship('itayw')
 
     if (bAutoStart and bStartup) or (not bStartup):
-        Debug(  'Entering idle state, waiting for media playing...', False)
-        while (bRun):
-            #If Set To AutoTweet
-            
-            if (bAutoTweetVideo):
-                CheckIfPlayingAndTweet_Video()
-            if (bAutoTweetMusic):
-                CheckIfPlayingAndTweet_Music()
-            time.sleep(5)
+        if (bRun):
+            Debug(  'Entering idle state, waiting for media playing...', False)
+            while (bRun):
+                #If Set To AutoTweet
+                if (bAutoTweetVideo):
+                    CheckIfPlayingAndTweet_Video()
+                if (bAutoTweetMusic):
+                    CheckIfPlayingAndTweet_Music()
+                time.sleep(5)
 else:
     bManual = True
     Debug('Entering Manual Mode', False)
