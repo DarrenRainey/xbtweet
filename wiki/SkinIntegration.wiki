@@ -11,5 +11,7 @@ In order to integrate xbTweet with any skin, first it needs to support it. I'm g
 	* Under scripts, tick the top checkbox for "Show subtitle script button in OSD' and navigate to where you saved your script in the 'Script path' box.
 	* Do the same for 'Show lyrics script button in OSD'
 	* Now you can tweet away from within you video or music player. Just press the appropriate button 'Subtitles' when watching videos and 'Lyrics' when listening to your songs.
-Check this screen shot for the correct settings.
+Check this screen shot for the correct settings.<br/>
+
+
 <img src="http://www.xbmcblog.com/wp-content/uploads/2010/01/Skin_Settings.jpg">
