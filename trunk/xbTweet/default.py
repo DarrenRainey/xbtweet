@@ -270,7 +270,7 @@ CustomTweet_TVShow = __settings__.getSetting( "TVShowTweet" )
 CustomTweet_Movie = __settings__.getSetting( "MovieTweet" )
 CustomTweet_Music = __settings__.getSetting( "MusicTweet" )
 
-bAutoTweetVideo = __settings__.getSetting( "AutoTweetViedo" )
+bAutoTweetVideo = __settings__.getSetting( "AutoTweetVideo" )
 if (bAutoTweetVideo == 'true'):
     bAutoTweetVideo = True
 else:
