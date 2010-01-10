@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-	<setting type="lsep" label="General Settings" />
-    	<setting id="AutoStart" type="bool" label="Automatically Start xbTwitter with XBMC" default="false"/>
-	<setting id="Username" type="text" label="Twitter Username" default=""/>
-	<setting id="OAuth" type="bool" label="Use OAuth" default="true"/>
-	<setting id="Password" type="text" option = "hidden" visible= "eq(-2,false)" enable="eq(-2,false)" label="Twitter Password" default=""/>
+	<setting type="lsep" label="30011" />
+    	<setting id="RunBackground" type="bool" label="Allow xbTweet to run in background" default="true"/>
+    	<setting id="AutoStart" type="bool" label="30012" default="false" visible= "eq(-1,true)" enable="eq(-1,true)"/>
+	<setting id="Username" type="text" label="30013" default=""/>
+	<setting id="OAuth" type="bool" label="Use OAuth (recommended)" default="true"/>
+	<setting id="Password" type="text" option="hidden" visible="eq(-1,false)" enable="eq(-1,false)" label="30015" default=""/>
 
-    	<setting type="lsep" label="Automatic Tweeting" />
-    	<setting id="AutoTweetVideo" type="bool" label="Automatically Tweet Videos I'm Watching" default="true"/>
-	<setting id="VideoThreshold" type="enum"  visible= "eq(-1,true)" enable="eq(-1,true)" label="Tweet only after I seen this percentage of the video" values="1|5|15|50|75|95" default="3"/>
-    	<setting id="AutoTweetMusic" type="bool" label="Automatically Tweet Music I'm Listening To" default="true"/>
-	<setting id="MusicThreshold" type="enum"  visible= "eq(-1,true)" enable="eq(-1,true)" label="Tweet only after I listened to this percentage of the song" values="1|5|15|50|75|95" default="3"/>
+    	<setting type="lsep" label="Tweeting" />
+    	<setting id="AutoTweetVideo" type="bool" label="30017" default="true"/>
+	<setting id="MovieTweet" type="text" label="30023" default="Watching %MOVIETITLE% (%MOVIEYEAR%)" visible= "eq(-1,true)" enable="eq(-1,true)"/>
+	<setting id="TVShowTweet" type="text" label="30022" default="Watching %SHOWNAME%, Season: %SEASON%, Episode: %EPISODENAME%" visible= "eq(-2,true)" enable="eq(-2,true)"/>
+	<setting id="VideoBitly" type="bool" visible= "eq(-3,true)" enable="eq(-3,true)" label="Add information link (bit.ly) when available" default="true"/>
+	<setting id="VideoThreshold" type="enum"  visible= "eq(-4,true)" enable="eq(-4,true)" label="Tweet only after I watched this percentage of the video" values="1%|5%|15%|50%|75%|95%" default="3"/>
+    	<setting id="AutoTweetMusic" type="bool" label="Automatically tweet music I'm playing" default="true"/>
+	<setting id="MusicTweet" type="text" label="30024" default="Listening to %ARTISTNAME% (%ALBUMTITLE%)" visible= "eq(-1,true)" enable="eq(-1,true)"/>
+	<setting id="MusicThreshold" type="enum"  visible= "eq(-2,true)" enable="eq(-2,true)" label="Tweet only after I played this percentage of the song" values="1%|5%|15%|50%|75%|95%" default="3"/>
+	<setting id="TagsTweet" type="text" label="Tags" default="#xbmc #xbtweet #nowplaying"/>
 
-	<setting id="CustomTweet" type="bool" label="Customize Automatic Tweets" default="false"/>
-	<setting id="TVShowTweet" type="text"  visible= "eq(-1,true)" enable="eq(-1,true)" label="TV Shows Tweet																	" default="Watching %SHOWNAME%, Episode: %EPISODENAME% on #xbmc #xbtweet #nowplaying"/>
-	<setting id="MovieTweet" type="text"  visible= "eq(-2,true)" enable="eq(-2,true)" label="Movies Tweet" default="Watching %MOVIETITLE% (%MOVIEYEAR%) on #xbmc #xbtweet #nowplaying"/>
-	<setting id="MusicTweet" type="text"  visible= "eq(-3,true)" enable="eq(-3,true)" label="Music Tweet																				" default="Listening to %ARTISTNAME% (%ALBUMTITLE%) on #xbmc #xbtweet #nowplaying"/>
-
-    	<setting type="lsep" label="Misc Settings" />
-    	<setting id="debug" type="bool" label="Enable Debug Log" default="false"/>
-    	<setting id="new_ver" type="bool" label="Auto Check for Newer Version" default="false"/>
-    	<setting id="followauthor" type="bool" label="Follow The Author of This Script" default="true"/>
+    	<setting type="lsep" label="Exclusions" />
+    	<setting id="OnlyLibrary" type="bool" label="Tweet only if playing a library item" default="true"/>
+    	<setting id="ExcludeAdult" type="bool" label="Exclude adult rated content" default="true"/>
+	<setting id="ExcludePath" type="folder" source="files" label="Exclude folder (and subfolders)" default="" />
+	
+    	<setting type="lsep" label="30025" />
+    	<setting id="debug" type="bool" label="30026" default="false"/>
+    	<setting id="new_ver" type="bool" label="30027" default="true"/>
+    	<setting id="followauthor" type="bool" label="30028" default="false"/>
 </settings>

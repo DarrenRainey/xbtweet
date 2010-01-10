@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+  <string id="30000">Ange Twitter PIN-koden</string>
+  <string id="30001">Skriv Tweet</string>
+  <string id="30002">xbTweet v%s</string>
+  <string id="30003">Version %s av xbTweet är tillgänglig</string>
+  <string id="30004">Titta på xbmcblog.com för mer information</string>
+  <string id="30005">Var vänlig och godkänn xbTweet på följande skärm.</string>
+  <string id="30006">Var vänlig och ange Twitterkonto-uppgifterna[CR]i skriptets inställningar.</string>
+  <string id="30007">xbTweet misslyckades att authentisera dig.[CR]Kontrollera skriptets inställningar</string>
+  <string id="30008">xbTweet misslyckades att authentisera dig.[CR]Var vänlig och godkänn xbTweet på följande skärm.</string>
+  <string id="30009">Välkommen till xbTweet</string>
+  <string id="30010">xbTweet</string>
+  <string id="30011">Allmänna inställningar</string>
+  <string id="30012">Starta xbTweet automatiskt med XBMC</string>
+  <string id="30013">Twitter-användarnamn</string>
+  <string id="30014">Använd OAuth</string>
+  <string id="30015">Twitter-lösenord</string>
+  <string id="30016">Automatisk tweetning</string>
+  <string id="30017">Tweeta videor jag tittar på automatiskt</string>
+  <string id="30018">Tweeta endast efter att jag sett följande procent av videon</string>
+  <string id="30019">Tweeta automatiskt musik jag lyssnar till</string>
+  <string id="30020">Tweeta endast efter att jag lyssnat till följande procent av låten</string>
+  <string id="30021">Anpassa automatiska tweets</string>
+  <string id="30022">TV-serie-tweet</string>
+  <string id="30023">Film-tweet</string>
+  <string id="30024">Musik-tweet</string>
+  <string id="30025">Diverse inställningar</string>
+  <string id="30026">Aktivera debugloggning</string>
+  <string id="30027">Kontrollera automatiskt efter nya versioner</string>
+  <string id="30028">Följ utvecklaren av detta skript</string>
+</strings>
