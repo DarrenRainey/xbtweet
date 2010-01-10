@@ -23,7 +23,7 @@
     <title>xbTweet</title>
 
     <!-- (required) Major.minor.build -->
-    <version>0.0.421</version>
+    <version>0.0.890</version>
 
     <!-- (required) author name & email.  at least one author name is required -->
     <authors>
@@ -34,11 +34,11 @@
     <summary>XBMC Interface for Twitter</summary>
 
     <!-- Longer descrption of addon.  Usage instructions should go here if required. -->
-    <description>Use this script to view your Twitter stream or tweet what you're watching to your friends.</description>
+    <description>xbTweet is a small script that works with your XBMC to tweet what you're playing</description>
 
     <!-- user defined tags e.g. <tags><tag>Example</tag></tags> -->
     <tags>
-        <tag>xbTweet.com</tag>
+        <tag>http://code.google.com/p/xbtweet/</tag>
         <tag>xbmcblog.com</tag>
         <tag>twitter.com</tag>
     </tags>
@@ -58,7 +58,7 @@
 
     <!-- (optional) Whatever is put in disclaimer will be shown before download in an ok/cancel dialog.
     Keep it short and to the point. -->
-    <disclaimer></disclaimer>
+    <disclaimer>Important! Please make sure you check the script settings.</disclaimer>
 
     <!-- (optional) The License the addon is released under.-->
     <license>GPL</license>
