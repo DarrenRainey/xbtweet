@@ -2,12 +2,15 @@ Customizing Your Tweets
 
 = Introduction =
 
-Add your content here.
+You can customize your tweets to include information from the playing movie/tv show/song.
+This can easily be achieved by opening the script's settings page and modifying the relevant tweet to include one of the following tags:
+%SHOWNAME% - TV Show name, i.e. Family Guy
+%SEASON% - Season number, i.e. 1
+%EPISODENAME% - The title of the episode, i.e. The Attic
+%MOVIETITLE% - The title of the movie, i.e. Iron Man
+%MOVIEYEAR% - The year of production, i.e. 2007
+%ARTISTNAME% - Performer's name, i.e. Coldplay
+%SONGTITLE% - Name of the song, i.e. Yellow
+%ALBUMTITLE% - Title of the album, i.e. X&Y
 
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+If you wish me to include more information, please add your comments below and it can easily be added.
