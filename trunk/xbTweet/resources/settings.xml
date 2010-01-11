@@ -21,7 +21,8 @@
     	<setting type="lsep" label="Exclusions" />
     	<setting id="OnlyLibrary" type="bool" label="Tweet only if playing a library item" default="true"/>
     	<setting id="ExcludeAdult" type="bool" label="Exclude adult rated content" default="true"/>
-	<setting id="ExcludePath" type="folder" source="files" label="Exclude folder (and subfolders)" default="" />
+	<setting id="ExcludePathOption" type="bool" label="Exclude Path" default="false"/>
+	<setting id="ExcludePath" type="folder" source="files" label="Folder's path (and subfolders)" default="" visible= "eq(-1,true)" enable="eq(-1,true)" />
 	
     	<setting type="lsep" label="30025" />
     	<setting id="debug" type="bool" label="30026" default="false"/>
