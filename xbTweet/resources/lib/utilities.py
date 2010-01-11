@@ -4,13 +4,13 @@ import xbmc
 import string
 
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
-__version__ = "0.0.890"
+__version__ = "0.0.891"
 
 #Path handling
 LANGUAGE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'language' ) )
-CONFIG_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) ) + '\\settings.cfg'
-AUTOEXEC_PATH = xbmc.translatePath( 'special://home/scripts/' ) + 'Autoexec.py'
-VERSION_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) ) + '\\version.cfg'
+CONFIG_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'settings.cfg' ) )
+AUTOEXEC_PATH = xbmc.translatePath( 'special://home/scripts/autoexec.py' )
+VERSION_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'version.cfg' ) )
 
 #Consts
 AUTOEXEC_SCRIPT = 'import time;time.sleep(5);xbmc.executebuiltin("XBMC.RunScript(special://home/scripts/xbtweet/default.py,-startup)")' 
@@ -102,7 +102,7 @@ if __settings__.getSetting( "new_ver" ) == "true":
         import re
         import urllib
         if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused	
-        usock = urllib.urlopen(__svn_url__ + "/default.py")
+        usock = urllib.urlopen(__svn_url__ + "default.py")
         htmlSource = usock.read()
         usock.close()
 

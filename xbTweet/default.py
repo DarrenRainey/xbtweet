@@ -13,7 +13,7 @@ __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.890"
+__version__ = "0.0.891"
 __XBMC_Revision__ = ""
    
 def CheckIfPlayingAndTweet_Video(Manual=False):
@@ -39,7 +39,7 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
         if ((xbmc.getInfoLabel("VideoPlayer.mpaa") == "XXX") and __settings__.getSetting( "ExcludeAdult" ) == 'true'):
             Debug('Movie is with XXX mpaa rating', False)            
             bRatingExcluded = True
-        if (__settings__.getSetting( "ExcludePath" ) != ""):
+        if ((__settings__.getSetting( "ExcludePath" ) != "") and (__settings__.getSetting( "ExcludePathOption" ) == 'true')):
             currentPath = xbmc.Player().getPlayingFile()
             if (currentPath.find(__settings__.getSetting( "ExcludePath" )) > -1):
                 Debug('Movie is located in excluded path', False) 
@@ -47,19 +47,19 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
         
         if len(xbmc.getInfoLabel("VideoPlayer.TVshowtitle")) > 1: # TvShow
             sType = "TVShow"
-            title = CustomTweet_TVShow            
-            title = title.replace('%SHOWNAME%', xbmc.getInfoLabel("VideoPlayer.TvShowTitle"))
-            title = title.replace('%EPISODENAME%', xbmc.getInfoLabel("VideoPlayer.Title"))
-            title = title.replace('%SEASON%', xbmc.getInfoLabel("VideoPlayer.Season"))
+            title = unicode(CustomTweet_TVShow , 'utf-8')           
+            title = title.replace('%SHOWNAME%', unicode(xbmc.getInfoLabel("VideoPlayer.TvShowTitle"), 'utf-8'))
+            title = title.replace('%EPISODENAME%', unicode(xbmc.getInfoLabel("VideoPlayer.Title"), 'utf-8'))
+            title = title.replace('%SEASON%', unicode(xbmc.getInfoLabel("VideoPlayer.Season"), 'utf-8'))
 
             if (__settings__.getSetting( "VideoBitly" ) == 'true'):
                 imdburl = "http://www.tv.com/search.php?qs=" + xbmc.getInfoLabel("VideoPlayer.TvShowTitle") + ' ' + xbmc.getInfoLabel("VideoPlayer.Title")
 
         elif len(xbmc.getInfoLabel("VideoPlayer.Title")) > 1: #Movie
             sType = "Movie"
-            title = CustomTweet_Movie                       
-            title = title.replace('%MOVIETITLE%', xbmc.getInfoLabel("VideoPlayer.Title"))
-            title = title.replace('%MOVIEYEAR%', xbmc.getInfoLabel("VideoPlayer.Year"))
+            title = unicode(CustomTweet_Movie, 'utf-8')
+            title = title.replace('%MOVIETITLE%', unicode(xbmc.getInfoLabel("VideoPlayer.Title"), 'utf-8'))
+            title = title.replace('%MOVIEYEAR%', unicode(xbmc.getInfoLabel("VideoPlayer.Year"), 'utf-8'))
 
             if (xbmc.getInfoLabel("VideoPlayer.Year") != "") and (__settings__.getSetting( "VideoBitly" ) == 'true'):
                 imdburl = "www.imdb.com/find?s=all&q=" + xbmc.getInfoLabel("VideoPlayer.Title") + ' (' + xbmc.getInfoLabel("VideoPlayer.Year") + ')'
@@ -75,9 +75,13 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
             iPercComp = CalcPercentageRemaining(xbmc.getInfoLabel("VideoPlayer.Time"), xbmc.getInfoLabel("VideoPlayer.Duration"))
             if ((iPercComp > (float(VideoThreshold) / 100)) or Manual):
                 lasttitle = title
-                bitlyAPI = Api(login="mrkav",apikey="R_f346d82149f7ae7fc8d2ee62d2854a56")
-                short = bitlyAPI.shorten(imdburl)    
-                Debug( "bit.ly URL = %s" % short, False)                  
+                try:
+                    bitlyAPI = Api(login="mrkav",apikey="R_f346d82149f7ae7fc8d2ee62d2854a56")
+                    short = bitlyAPI.shorten(imdburl)    
+                    Debug( "bit.ly URL = %s" % short, False)            
+                except:
+                    short = ""
+                    pass
                 if (short != ""):
                     if len(title + ' ' + short) <= MAX_TWEET_LENGTH: 
                         title = title + ' ' + short
@@ -96,11 +100,12 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
         global MAX_TWEET_LENGTH
         
         Debug( 'Music is playing, checking if tweet is needed...', True) 
-        title = CustomTweet_Music
-        if len(xbmc.getInfoLabel("MusicPlayer.Title")) > 1: # Song
-            title = title.replace('%ARTISTNAME%', xbmc.getInfoLabel("MusicPlayer.Artist"))
-            title = title.replace('%SONGTITLE%', xbmc.getInfoLabel("MusicPlayer.Title"))
-            title = title.replace('%ALBUMTITLE%', xbmc.getInfoLabel("MusicPlayer.Album"))
+        title = unicode(CustomTweet_Music, 'utf-8')
+        print title
+        if len(xbmc.getInfoLabel("MusicPlayer.Title")) >= 1: # Song
+            title = title.replace('%ARTISTNAME%', unicode(xbmc.getInfoLabel("MusicPlayer.Artist"), 'utf-8'))
+            title = title.replace('%SONGTITLE%', unicode(xbmc.getInfoLabel("MusicPlayer.Title"), 'utf-8'))
+            title = title.replace('%ALBUMTITLE%', unicode(xbmc.getInfoLabel("MusicPlayer.Album"), 'utf-8'))
             if (__settings__.getSetting( "VideoBitly" ) == 'true'):
                 imdburl = "http://www.last.fm/search?type=album&q=" + xbmc.getInfoLabel("MusicPlayer.Album")
 
@@ -110,9 +115,13 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
             iPercComp = CalcPercentageRemaining(xbmc.getInfoLabel("MusicPlayer.Time"), xbmc.getInfoLabel("MusicPlayer.Duration"))
             if ((iPercComp > (float(MusicThreshold) / 100)) or Manual):
                 lasttitle = title                
-                bitlyAPI = Api(login="mrkav",apikey="R_f346d82149f7ae7fc8d2ee62d2854a56")
-                short = bitlyAPI.shorten(imdburl)    
-                Debug( "bit.ly URL = %s" % short, False)            
+                try:
+                    bitlyAPI = Api(login="mrkav",apikey="R_f346d82149f7ae7fc8d2ee62d2854a56")
+                    short = bitlyAPI.shorten(imdburl)    
+                    Debug( "bit.ly URL = %s" % short, False)            
+                except:
+                    short = ""
+                    pass
                 if (short != ""):
                     if len(title + ' ' + short) <= MAX_TWEET_LENGTH: 
                         title = title + ' ' + short
@@ -219,7 +228,7 @@ Debug( '::Settings::', True)
 if (CheckVersion() != __version__):
     import xbmcgui
     dialog = xbmcgui.Dialog()    
-    selected = dialog.ok("xbTweet v" + str(__version__), "You recently upgraded your version, it's important that" ,"you review the script settings. xbTweet will exit now." )
+    selected = dialog.ok(__language__(30002) % str(__version__), __language__(30040), __language__(30041) )
     bRun = False
     WriteVersion(__version__)
 

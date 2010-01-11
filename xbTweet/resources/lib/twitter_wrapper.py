@@ -16,7 +16,7 @@ __language__ = xbmc.Language( os.getcwd() ).getLocalizedString
 __settings__ = xbmc.Settings( path=os.getcwd() )
 
 RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) )
-CONFIG_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) ) + '\\settings.cfg'
+CONFIG_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'settings.cfg') )
 
 bOAuth = False
 if (__settings__.getSetting( "OAuth" ) == 'true'): bOAuth = True
@@ -84,7 +84,7 @@ def StartOAuthProcess():
     config.add_section('Twitter Account')
     config.set('Twitter Account', 'key', twitter_key)
     config.set('Twitter Account', 'secret', twitter_secret)            
-    configfile = file(RESOURCE_PATH + '\settings.cfg', 'wb')
+    configfile = file(os.path.join( RESOURCE_PATH, 'settings.cfg' ), 'wb')
     config.write(configfile)
     Debug( '::StartOAuthProcess::', True)
     return CreateAPIObject()   
