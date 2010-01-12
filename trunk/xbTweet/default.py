@@ -13,7 +13,7 @@ __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.891"
+__version__ = "0.0.892"
 __XBMC_Revision__ = ""
    
 def CheckIfPlayingAndTweet_Video(Manual=False):
@@ -45,23 +45,23 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
                 Debug('Movie is located in excluded path', False) 
                 bPathExcluded = True
         
-        if len(xbmc.getInfoLabel("VideoPlayer.TVshowtitle")) > 1: # TvShow
+        if len(xbmc.getInfoLabel("VideoPlayer.TVshowtitle")) >= 1: # TvShow
             sType = "TVShow"
             title = unicode(CustomTweet_TVShow , 'utf-8')           
             title = title.replace('%SHOWNAME%', unicode(xbmc.getInfoLabel("VideoPlayer.TvShowTitle"), 'utf-8'))
             title = title.replace('%EPISODENAME%', unicode(xbmc.getInfoLabel("VideoPlayer.Title"), 'utf-8'))
             title = title.replace('%SEASON%', unicode(xbmc.getInfoLabel("VideoPlayer.Season"), 'utf-8'))
 
-            if (__settings__.getSetting( "VideoBitly" ) == 'true'):
+            if (__settings__.getSetting( "AddBitly" ) == 'true'):
                 imdburl = "http://www.tv.com/search.php?qs=" + xbmc.getInfoLabel("VideoPlayer.TvShowTitle") + ' ' + xbmc.getInfoLabel("VideoPlayer.Title")
 
-        elif len(xbmc.getInfoLabel("VideoPlayer.Title")) > 1: #Movie
+        elif len(xbmc.getInfoLabel("VideoPlayer.Title")) >= 1: #Movie
             sType = "Movie"
             title = unicode(CustomTweet_Movie, 'utf-8')
             title = title.replace('%MOVIETITLE%', unicode(xbmc.getInfoLabel("VideoPlayer.Title"), 'utf-8'))
             title = title.replace('%MOVIEYEAR%', unicode(xbmc.getInfoLabel("VideoPlayer.Year"), 'utf-8'))
 
-            if (xbmc.getInfoLabel("VideoPlayer.Year") != "") and (__settings__.getSetting( "VideoBitly" ) == 'true'):
+            if (xbmc.getInfoLabel("VideoPlayer.Year") != "") and (__settings__.getSetting( "AddBitly" ) == 'true'):
                 imdburl = "www.imdb.com/find?s=all&q=" + xbmc.getInfoLabel("VideoPlayer.Title") + ' (' + xbmc.getInfoLabel("VideoPlayer.Year") + ')'
             
             #don't tweet if not in library
@@ -101,12 +101,11 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
         
         Debug( 'Music is playing, checking if tweet is needed...', True) 
         title = unicode(CustomTweet_Music, 'utf-8')
-        print title
         if len(xbmc.getInfoLabel("MusicPlayer.Title")) >= 1: # Song
             title = title.replace('%ARTISTNAME%', unicode(xbmc.getInfoLabel("MusicPlayer.Artist"), 'utf-8'))
             title = title.replace('%SONGTITLE%', unicode(xbmc.getInfoLabel("MusicPlayer.Title"), 'utf-8'))
             title = title.replace('%ALBUMTITLE%', unicode(xbmc.getInfoLabel("MusicPlayer.Album"), 'utf-8'))
-            if (__settings__.getSetting( "VideoBitly" ) == 'true'):
+            if (__settings__.getSetting( "AddBitly" ) == 'true'):
                 imdburl = "http://www.last.fm/search?type=album&q=" + xbmc.getInfoLabel("MusicPlayer.Album")
 
         if len(title) > MAX_TWEET_LENGTH:
@@ -135,12 +134,14 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
 RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) )
 BASE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'lib' ) )
 LANGUAGE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'language' ) )
+MEDIA_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'skins' ) )
 sys.path.append (BASE_RESOURCE_PATH)
 sys.path.append (LANGUAGE_RESOURCE_PATH)
 
 from utilities import *
 from twitter_wrapper import *
 from bitly import *
+
 Debug('----------- ' + __scriptname__ + ' by ' + __author__ + ', version ' + __version__ + ' -----------', False)
 
 #Settings related parsing
@@ -214,9 +215,9 @@ Debug( 'FirstRun: ' + str(bFirstRun), True)
 Debug( 'AutoTweetViedo:' + str(bAutoTweetVideo), True)
 Debug( 'AutoTweetMusic:' + str(bAutoTweetMusic), True)
 Debug( 'CustomTweets: ' + str(bCustomTweets), True)
-Debug( 'CustomTweet_TVShow: ' + CustomTweet_TVShow, True)
-Debug( 'CustomTweet_Movie: ' + CustomTweet_Movie, True)
-Debug( 'CustomTweet_Music: ' + CustomTweet_Music, True)
+Debug( 'CustomTweet_TVShow: ' + unicode(CustomTweet_TVShow, 'utf-8'), True)
+Debug( 'CustomTweet_Movie: ' + unicode(CustomTweet_Movie, 'utf-8'), True)
+Debug( 'CustomTweet_Music: ' + unicode(CustomTweet_Music, 'utf-8'), True)
 Debug( 'TagsTweet: ' + TagsTweet, True)
 Debug( 'VideoThreshold: ' + str(VideoThreshold), True)
 Debug( 'MusicThreshold: ' + str(MusicThreshold), True)
@@ -228,7 +229,8 @@ Debug( '::Settings::', True)
 if (CheckVersion() != __version__):
     import xbmcgui
     dialog = xbmcgui.Dialog()    
-    selected = dialog.ok(__language__(30002) % str(__version__), __language__(30040), __language__(30041) )
+    selected = dialog.ok(__language__(30002) % (str(__version__)), __language__(30040), __language__(30041) )
+
     bRun = False
     WriteVersion(__version__)
 
