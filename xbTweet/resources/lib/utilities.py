@@ -4,7 +4,7 @@ import xbmc
 import string
 
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
-__version__ = "0.0.891"
+__version__ = "0.0.892"
 
 #Path handling
 LANGUAGE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'language' ) )
@@ -13,7 +13,7 @@ AUTOEXEC_PATH = xbmc.translatePath( 'special://home/scripts/autoexec.py' )
 VERSION_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'version.cfg' ) )
 
 #Consts
-AUTOEXEC_SCRIPT = 'import time;time.sleep(5);xbmc.executebuiltin("XBMC.RunScript(special://home/scripts/xbtweet/default.py,-startup)")' 
+AUTOEXEC_SCRIPT = '\nimport time;time.sleep(5);xbmc.executebuiltin("XBMC.RunScript(special://home/scripts/xbTweet/default.py,-startup)")\n'
 
 __language__ = xbmc.Language( os.getcwd() ).getLocalizedString
 __settings__ = xbmc.Settings( path=os.getcwd() )
@@ -26,9 +26,11 @@ def Debug(message, Verbose=True):
         bVerbose = False
     
     if (bVerbose and Verbose):
-        print message
+        # repr() is used, got wierd issues with unicode otherwise, since we send mixed string types (eg: unicode and ascii) 
+        print repr(message)
     elif (not Verbose):
-        print message
+        # repr() is used, got wierd issues with unicode otherwise, since we send mixed string types (eg: unicode and ascii) 
+        print repr(message)
 
 def CheckVersion():
     Version = ""
@@ -55,9 +57,22 @@ def CheckIfUpgrade():
     return False
 
 def CalcPercentageRemaining(currenttime, duration):
-    iCurrentMinutes = (int(currenttime.split(':')[0]) * 60) + int(currenttime.split(':')[1])
-    iDurationMinutes = (int(duration.split(':')[0]) * 60) + int(duration.split(':')[1])
-    return float(iCurrentMinutes) / float(iDurationMinutes) 
+    try:
+         iCurrentMinutes = (int(currenttime.split(':')[0]) * 60) + int(currenttime.split(':')[1])
+    except:
+        iCurrentMinutes = int(0)
+        
+    try:
+        iDurationMinutes = (int(duration.split(':')[0]) * 60) + int(duration.split(':')[1])
+    except:
+        iDurationMinutes = int(0)
+
+    try:
+        print "conv: " + str(float(iCurrentMinutes) / float(iDurationMinutes))
+        return float(iCurrentMinutes) / float(iDurationMinutes) 
+    except:
+        print "null: " + str("0.0")
+        return float(0.0)
 
 def SetAutoStart(bState = True):
     Debug( '::AutoStart::' + str(bState), True)
@@ -65,34 +80,30 @@ def SetAutoStart(bState = True):
         Debug( 'Found Autoexec.py file, checking we''re there', True)
         bFound = False
         autoexecfile = file(AUTOEXEC_PATH, 'r')
-        filecontents = autoexecfile.read()
-        lines_fixed = ""
-        autoexecfile.seek(0)
-        while 1:
-            lines = autoexecfile.readlines(1000)
-            if not lines: break
-            for line in lines:
-                if (string.find(line, 'xbtweet') > 1):
-                    Debug( 'Found our script, no need to do anything', True)
-                    bFound = True
-                else:
-                    lines_fixed = lines_fixed + line + '\r\n'
+        filecontents = autoexecfile.readlines()
         autoexecfile.close()
+        for line in filecontents:
+            if line.find('xbTweet') > 0:
+                Debug( 'Found our script, no need to do anything', True)
+                bFound = True
         if (not bFound):
             Debug( 'Appending our script to the autoexec.py script', True)
             autoexecfile = file(AUTOEXEC_PATH, 'w')
-            autoexecfile.write (filecontents + '\r\n' + AUTOEXEC_SCRIPT)
+            filecontents.append(AUTOEXEC_SCRIPT)
+            autoexecfile.writelines(filecontents)            
             autoexecfile.close()
         if (bFound and not bState):
             #remove line
             Debug( 'Removing our script from the autoexec.py script', True)
             autoexecfile = file(AUTOEXEC_PATH, 'w')
-            autoexecfile.write (lines_fixed)
+            for line in filecontents:
+                if not line.find('xbTweet') > 0:
+                    autoexecfile.write(line)
             autoexecfile.close()            
     else:
         Debug( 'File Autoexec.py is missing, creating file with autostart script', True)
         autoexecfile = file(AUTOEXEC_PATH, 'w')
-        autoexecfile.write (AUTOEXEC_SCRIPT)
+        autoexecfile.write (AUTOEXEC_SCRIPT.strip())
         autoexecfile.close()
     Debug( '::AutoStart::'  , True)
 
