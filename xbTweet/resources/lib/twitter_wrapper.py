@@ -115,8 +115,17 @@ def UpdateStatus(update, Manual=False):
         Debug ('Tweet: ' + update, False)
         api = CreateAPIObject()
         if (VerifyAPIObject(api)):
-            update = api.update_status(update)
-            pass
+            #check we didn't hit the api limit
+            apicallsleft = 0
+            try:
+                count = str(api.rate_limit_status())
+                apicallsleft = int(count.split(',')[1].split(':')[1])
+            except:
+                Debug ('Error fetching API count')
+            Debug ('API Count Check: ' + str(apicallsleft), False)            
+            if apicallsleft > 0:
+                update = api.update_status(update)
+                pass
         else:
             print 'failed'
 

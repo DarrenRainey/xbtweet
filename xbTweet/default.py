@@ -13,7 +13,7 @@ __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.892"
+__version__ = "0.0.893"
 __XBMC_Revision__ = ""
    
 def CheckIfPlayingAndTweet_Video(Manual=False):
@@ -26,6 +26,7 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
         bExcluded = False
         short = ""
         title = ""
+        imdburl = ""
         global CustomTweet_TVShow
         global CustomTweet_Movie
         global VideoThreshold
@@ -53,7 +54,14 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
             title = title.replace('%SEASON%', unicode(xbmc.getInfoLabel("VideoPlayer.Season"), 'utf-8'))
 
             if (__settings__.getSetting( "AddBitly" ) == 'true'):
-                imdburl = "http://www.tv.com/search.php?qs=" + xbmc.getInfoLabel("VideoPlayer.TvShowTitle") + ' ' + xbmc.getInfoLabel("VideoPlayer.Title")
+                try:
+                    query = "select case when not tvshow.c12 is null then tvshow.c12 else 'NOTFOUND' end as [ShowID] from tvshow where tvshow.c00 = '" + unicode(xbmc.getInfoLabel("VideoPlayer.TvShowTitle")) + "' limit 1"
+                    res = xbmc.executehttpapi("queryvideodatabase(" + query + ")")
+                    tvshowid = re.findall('>(.*?)<',res) # find it
+                    if len(tvshowid[1].strip()) >= 1:
+                        imdburl = "http://thetvdb.com/?tab=series&id=" + str(tvshowid[1].strip())
+                except:        
+                    imdburl = ""
 
         elif len(xbmc.getInfoLabel("VideoPlayer.Title")) >= 1: #Movie
             sType = "Movie"
@@ -62,8 +70,15 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
             title = title.replace('%MOVIEYEAR%', unicode(xbmc.getInfoLabel("VideoPlayer.Year"), 'utf-8'))
 
             if (xbmc.getInfoLabel("VideoPlayer.Year") != "") and (__settings__.getSetting( "AddBitly" ) == 'true'):
-                imdburl = "www.imdb.com/find?s=all&q=" + xbmc.getInfoLabel("VideoPlayer.Title") + ' (' + xbmc.getInfoLabel("VideoPlayer.Year") + ')'
-            
+                try:
+                    query = "select case when not movie.c09 is null then movie.c09 else 'NOTFOUND' end as [MovieID] from movie where movie.c00 = '" + unicode(xbmc.getInfoLabel("VideoPlayer.Title")) + "' limit 1"
+                    res = xbmc.executehttpapi("queryvideodatabase(" + query + ")")
+                    movieid = re.findall('>(.*?)<',res) # find it
+                    if len(movieid[1].strip()) >= 1:
+                        imdburl = "http://www.imdb.com/title/" + str(movieid[1].strip())
+                except:        
+                    imdburl = ""
+                
             #don't tweet if not in library
             if (xbmc.getInfoLabel("VideoPlayer.Year") == ""):
                 title = ""

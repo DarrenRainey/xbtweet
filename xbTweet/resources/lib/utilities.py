@@ -4,7 +4,7 @@ import xbmc
 import string
 
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
-__version__ = "0.0.892"
+__version__ = "0.0.893"
 
 #Path handling
 LANGUAGE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'language' ) )
@@ -68,10 +68,10 @@ def CalcPercentageRemaining(currenttime, duration):
         iDurationMinutes = int(0)
 
     try:
-        print "conv: " + str(float(iCurrentMinutes) / float(iDurationMinutes))
+        Debug( 'Percentage of progress: ' + str(float(iCurrentMinutes) / float(iDurationMinutes)), True)
         return float(iCurrentMinutes) / float(iDurationMinutes) 
     except:
-        print "null: " + str("0.0")
+        Debug( 'Percentage of progress: null', True)
         return float(0.0)
 
 def SetAutoStart(bState = True):
