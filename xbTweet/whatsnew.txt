@@ -1,0 +1,7 @@
+Testing displaying a message within XBMC in our own custom dialog box.
+Wow, can't believe it really worked, ah...
+
+lines
+lines
+lines
+lines
