@@ -1,16 +1,11 @@
-Testing displaying a message within XBMC in our own custom dialog box. I wanted to extend the line behond the box's width.
-Wow, can't believe it really worked, ah...
+Welcome and thank you for using xbTweet! 
 
-lines
-lines
-lines
-lines
+beta version 0.900 released.
+This new version of xbTweet as many new features and updates:
+- Receive notifications while watching movies or playing music
+  You can specify when and how you wish to be notified about in the script's settings page.
+- Better bit.ly links, let your followers to read more about what you're playing
+  When activated in the script's setting page, xbTweet will include a short link in your tweets that will take your followers to imdb/last.fm to read more about the content.
 
-more lines
-
-lines
-lines
-lines
-lines
-
-more lines
+Follow me on @itayw
+Read more about the project on xbtweet.googlecode.com
