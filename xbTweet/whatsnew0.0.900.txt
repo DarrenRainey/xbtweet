@@ -2,10 +2,17 @@ Welcome and thank you for using xbTweet!
 
 beta version 0.900 released.
 This new version of xbTweet as many new features and updates:
-- Receive notifications while watching movies or playing music
-  You can specify when and how you wish to be notified about in the script's settings page.
-- Better bit.ly links, let your followers to read more about what you're playing
-  When activated in the script's setting page, xbTweet will include a short link in your tweets that will take your followers to imdb/last.fm to read more about the content.
+Notifications
+Receive notifications while watching movies or playing music.
+You can specify when and how you wish to be notified about in the script's settings page.
 
-Follow me on @itayw
+Better information links
+Let your followers to read more about what you're playing.
+When activated in the script's setting page, xbTweet will include a short link in your tweets that will take your followers to imdb/thetvdb.com/last.fm to read more about the content.
+
+
+
+Thanks to @blittan, @gergtreble for their support.
+
 Read more about the project on xbtweet.googlecode.com
+Follow me on @itayw
