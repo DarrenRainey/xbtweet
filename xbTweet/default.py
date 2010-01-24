@@ -8,18 +8,19 @@ import time
 import ConfigParser
 import string
 
+###General vars
 __scriptname__ = "xbTweet"
 __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
-__credits__ = ""
-__version__ = "0.0.893"
+__credits__ = "@blittan, @gergtrebles"
+__version__ = "0.0.900"
 __XBMC_Revision__ = ""
-   
+
 def CheckIfPlayingAndTweet_Video(Manual=False):
     sType = ""
     if xbmc.Player().isPlayingVideo():
-        Debug( 'Video is playing, checking if tweet is needed...', True)
+        #Debug( 'Video is playing, checking if tweet is needed...', True)
         bLibraryExcluded = False
         bRatingExcluded = False
         bPathExcluded = False
@@ -45,6 +46,16 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
             if (currentPath.find(__settings__.getSetting( "ExcludePath" )) > -1):
                 Debug('Movie is located in excluded path', False) 
                 bPathExcluded = True
+        if ((__settings__.getSetting( "ExcludePath2" ) != "") and (__settings__.getSetting( "ExcludePathOption2" ) == 'true')):
+            currentPath = xbmc.Player().getPlayingFile()
+            if (currentPath.find(__settings__.getSetting( "ExcludePath2" )) > -1):
+                Debug('Movie is located in excluded path 2', False) 
+                bPathExcluded = True
+        if ((__settings__.getSetting( "ExcludePath3" ) != "") and (__settings__.getSetting( "ExcludePathOption3" ) == 'true')):
+            currentPath = xbmc.Player().getPlayingFile()
+            if (currentPath.find(__settings__.getSetting( "ExcludePath3" )) > -1):
+                Debug('Movie is located in excluded path 3', False) 
+                bPathExcluded = True                     
         
         if len(xbmc.getInfoLabel("VideoPlayer.TVshowtitle")) >= 1: # TvShow
             sType = "TVShow"
@@ -114,7 +125,7 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
         global lasttitle
         global MAX_TWEET_LENGTH
         
-        Debug( 'Music is playing, checking if tweet is needed...', True) 
+        #Debug( 'Music is playing, checking if tweet is needed...', True) 
         title = unicode(CustomTweet_Music, 'utf-8')
         if len(xbmc.getInfoLabel("MusicPlayer.Title")) >= 1: # Song
             title = title.replace('%ARTISTNAME%', unicode(xbmc.getInfoLabel("MusicPlayer.Artist"), 'utf-8'))
@@ -143,9 +154,16 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
                     title = title + ' ' + TagsTweet
                 Debug('Title: ' + title + ' current percentage: ' + str(iPercComp), True)                
                 UpdateStatus(title, Manual)
-            
 
-#Path handling
+def ShowMessage(MessageID):    
+    import gui_auth
+    message = __language__(MessageID)
+    ui = gui_auth.GUI( "script-xbTweet-generic.xml" , os.getcwd(), "Default")
+    ui.setParams ("message", __language__(30042), message, 0)
+    ui.doModal()
+    del ui
+    
+###Path handling
 RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) )
 BASE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'lib' ) )
 LANGUAGE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'language' ) )
@@ -156,15 +174,15 @@ sys.path.append (LANGUAGE_RESOURCE_PATH)
 from utilities import *
 from twitter_wrapper import *
 from bitly import *
-
+    
 Debug('----------- ' + __scriptname__ + ' by ' + __author__ + ', version ' + __version__ + ' -----------', False)
 
-#Settings related parsing
+###Settings related parsing
 __language__ = xbmc.Language( os.getcwd() ).getLocalizedString
 _ = sys.modules[ "__main__" ].__language__
 __settings__ = xbmc.Settings( path=os.getcwd() )
 
-#Vars and initial load
+###Vars and initial load
 MAX_TWEET_LENGTH = 140
 bRun = True #Enter idle state waiting to tweet
 bStartup = False
@@ -185,6 +203,12 @@ VideoThreshold = 0
 MusicThreshold = 0
 FollowAuthor = False
 
+bNotifyTimeline = False
+bNotifyMention = False
+bNotifyDirect = False
+
+bShowWhatsNew = False
+
 if (__settings__.getSetting( "OAuth" ) == 'true'): bOAuth = True
 if (__settings__.getSetting( "AutoStart" ) == 'true'): bAutoStart = True
 if (__settings__.getSetting( "RunBackground" ) == 'true'): bRunBackground = True
@@ -192,6 +216,20 @@ if (__settings__.getSetting( "AutoTweetVideo" ) == 'true'): bAutoTweetVideo = Tr
 if (__settings__.getSetting( "AutoTweetMusic" ) == 'true'): bAutoTweetMusic = True
 if (__settings__.getSetting( "CustomTweet" ) == 'true'): bCustomTweets = True
 if (__settings__.getSetting( "FollowAuthor" ) == 'true'): FollowAuthor = True
+
+if (__settings__.getSetting( "showwhatsnew" ) == 'true'): bShowWhatsNew = True
+
+if (__settings__.getSetting( "NotifyTimeline" ) == 'true'): bNotifyTimeline = True
+if (__settings__.getSetting( "NotifyMention" ) == 'true'): bNotifyMention = True
+if (__settings__.getSetting( "NotifyDirect" ) == 'true'): bNotifyDirect = True
+NotifyInterval = int(__settings__.getSetting( "NotifyInterval" ))
+if (NotifyInterval == 0): NotifyInterval = 3
+elif (NotifyInterval == 1): NotifyInterval = 5
+elif (NotifyInterval == 2): NotifyInterval = 10
+elif (NotifyInterval == 3): NotifyInterval = 60
+elif (NotifyInterval == 4): NotifyInterval = 120
+elif (NotifyInterval == 5): NotifyInterval = 180
+
 CustomTweet_TVShow = __settings__.getSetting( "TVShowTweet" )
 CustomTweet_Movie = __settings__.getSetting( "MovieTweet" )
 CustomTweet_Music = __settings__.getSetting( "MusicTweet" )
@@ -239,16 +277,36 @@ Debug( 'MusicThreshold: ' + str(MusicThreshold), True)
 Debug( 'FollowAuthor: ' + str(FollowAuthor), True)
 Debug( 'Startup: ' + str(bStartup), True)
 Debug( 'Shortcut: ' + str(bShortcut), True)
+Debug( 'NotifyInterval: ' + str(NotifyInterval), True)
+Debug( 'ShowWhatsNew:' + str(bShowWhatsNew), True)
 Debug( '::Settings::', True)
 
-if (CheckVersion() != __version__):
-    import xbmcgui
-    dialog = xbmcgui.Dialog()    
-    selected = dialog.ok(__language__(30002) % (str(__version__)), __language__(30040), __language__(30041) )
-
+###Initial checks
+#API Validation
+if not Twitter_Login():
+    ShowMessage(40007) #OAuth starts
     bRun = False
-    WriteVersion(__version__)
 
+#New Version
+if ((CheckVersion() != __version__ ) and (bShowWhatsNew)):
+    try:
+        import urllib
+        usock = urllib.urlopen("http://xbtweet.googlecode.com/svn/trunk/xbTweet/whatsnew" + __version__ + ".txt")
+        message = usock.read()
+        usock.close()
+
+        import gui_welcome
+        ui = gui_welcome.GUI( "script-xbTweet-generic.xml" , os.getcwd(), "Default")
+        ui.setParams ("message",  __language__(30043), message, 0)
+        ui.doModal()
+        del ui
+
+        bRun = False
+        WriteVersion(__version__)
+    except:
+        Debug('Failed to validate if new version', False)
+
+###Main logic
 if (not xbmc.getCondVisibility('videoplayer.isfullscreen') and not bShortcut and not bStartup):
     Debug(  'Pressed in scripts menu', False)        
     SetAutoStart(bAutoStart)
@@ -266,18 +324,100 @@ if (bShortcut): bRun = False
 #Startup Execution 
 if ((bStartup and bAutoStart) or bRun):
     Debug(  'Entering idle state, waiting for media playing...', False)
+
+    twittersmallicon = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'skins', 'default', 'media', 'smalltwitter.png' ) )
+    xbmc.executebuiltin('Notification(xbTweet,' + __language__(30044) + ',3000,' + twittersmallicon + ')')
+    
+    #we need the last id
+    lastid = 0
+    lastDMid = 0
+    lastTweetid = 0
+    timeline_interval = 0
+    newNotification = CheckForMentions(lastid)
+    if newNotification != None:
+        lastid = newNotification.id
+    else:
+        lastid = 0
+    #lastid = 5832633350
+    Debug('Last mention id: ' + str(lastid), True)
+
+    newNotification = None
+    newNotification = CheckForDM(lastDMid)
+    if newNotification != None:
+        lastDMid = newNotification.id
+    else:
+        lastDMid = 0
+    #lastDMid = 754665490
+    Debug('Last DM id: ' + str(lastDMid), True)
+
+    newTweets = None
+    newTweets = CheckForTimeline(lastTweetid)
+    if newTweets != None:
+        lastTweetid = newTweets[0].id
+    else:
+        lastTweetid = 0
+    #lastTweetid = 8113088400
+    Debug('Last Tweet id: ' + str(lastTweetid), True)    
+
     while 1:
         #If Set To AutoTweet
         if (bAutoTweetVideo):
             CheckIfPlayingAndTweet_Video()
         if (bAutoTweetMusic):
             CheckIfPlayingAndTweet_Music()
+
+        if ((timeline_interval * 5) % (NotifyInterval * 60) == 0):
+            Debug('Notification Interval Reached...', False)
+            timeline_interval = 0
+            newNotification = ""
+            newNotification = CheckForMentions(lastid)
+            if (newNotification != None):
+                lastid = newNotification.id
+                if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused
+                import Window_Notification
+                ui = Window_Notification.GUI( "script-xbTweet-Notification.xml" , os.getcwd(), "Default")
+                ui.setTwitterText (newNotification.text, "mention", newNotification.user.screen_name, newNotification.user.profile_image_url, newNotification.created_at, newNotification.source)
+                ui.doModal()
+                if xbmc.getCondVisibility('Player.Paused'): xbmc.Player().pause() # if Paused, un-pause
+                del ui
+
+            newNotification = None
+            newNotification = CheckForDM(lastDMid)
+            if (newNotification != None):
+                lastDMid = newNotification.id
+                if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused
+                import Window_Notification
+                ui = Window_Notification.GUI( "script-xbTweet-Notification.xml" , os.getcwd(), "Default")
+                ui.setTwitterText (newNotification.text, "direct_message", newNotification.sender.screen_name, newNotification.sender.profile_image_url, newNotification.created_at, "")
+                ui.doModal()
+                if xbmc.getCondVisibility('Player.Paused'): xbmc.Player().pause() # if Paused, un-pause
+                del ui
+
+            newTweets = None
+            newTweets = CheckForTimeline(lastTweetid)
+            if (newTweets != None):
+                lastTweetid = newTweets[0].id
+                import Window_Fall
+                tweet = newTweets[0]
+                ui = Window_Fall.GUI( "script-xbTweet-Fall.xml" , os.getcwd(), "Default")
+                ui.setTwitterText (tweet.text, "tweet", tweet.user.screen_name, tweet.user.profile_image_url, tweet.created_at, tweet.source)
+                ui.show()
+                ui.onInit()
+                try:
+                    print 'position: ' + ui.getPosition()
+                except:
+                    pass
+
+        timeline_interval = timeline_interval + 1
         time.sleep(5)
+
+        
 #Manual Execution - Skin or Shortcut
 else:
     bManual = True
     Debug('Entering Manual Mode', False)
     #manual tweet
+
     if not xbmc.getCondVisibility('Player.Paused'): xbmc.Player().pause()
     CheckIfPlayingAndTweet_Video(True)
     CheckIfPlayingAndTweet_Music(True)
