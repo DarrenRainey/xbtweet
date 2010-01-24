@@ -1,4 +1,4 @@
-Testing displaying a message within XBMC in our own custom dialog box.
+Testing displaying a message within XBMC in our own custom dialog box. I wanted to extend the line behond the box's width.
 Wow, can't believe it really worked, ah...
 
 lines
