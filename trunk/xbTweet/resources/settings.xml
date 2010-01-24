@@ -18,13 +18,24 @@
     <setting id="AddBitly" type="bool" label="30032" default="true" />
     <setting id="TagsTweet" type="text" label="30014" default="#xbmc #xbtweet #nowplaying" />
 
+	<setting type="lsep" label="Timeline Notifications" />
+    <setting id="NotifyInterval" type="enum" label="30046" values="3|5|10|60|120|180" default="2" />
+    <setting id="NotifyTimeline" type="bool" label="30047" default="true" />
+	<setting id="NotifyMention" type="bool" label="30048" default="true" />
+    <setting id="NotifyDirect" type="bool" label="30049" default="true" />
+
     <setting type="lsep" label="30036" />
     <setting id="OnlyLibrary" type="bool" label="30037" default="true" />
     <setting id="ExcludeAdult" type="bool" label="30038" default="true" />
     <setting id="ExcludePathOption" type="bool" label="30031" default="false" />
     <setting id="ExcludePath" type="folder" source="files" label="30039" default="" visible= "eq(-1,true)" enable="eq(-1,true)" />
+    <setting id="ExcludePathOption2" type="bool" label="30031" default="false" />
+    <setting id="ExcludePath2" type="folder" source="files" label="30039" default="" visible= "eq(-1,true)" enable="eq(-1,true)" />
+    <setting id="ExcludePathOption3" type="bool" label="30031" default="false" />
+    <setting id="ExcludePath3" type="folder" source="files" label="30039" default="" visible= "eq(-1,true)" enable="eq(-1,true)" />
 
     <setting type="lsep" label="30025" />
+	<setting id="showwhatsnew" type="bool" label="30045" default="true" />
     <setting id="new_ver" type="bool" label="30027" default="true" />
     <setting id="followauthor" type="bool" label="30028" default="false" />
     <setting id="debug" type="bool" label="30026" default="false" />
