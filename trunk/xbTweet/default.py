@@ -14,7 +14,7 @@ __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
 __credits__ = "@blittan, @gergtrebles"
-__version__ = "0.0.900"
+__version__ = "0.0.904"
 __XBMC_Revision__ = ""
 
 def CheckIfPlayingAndTweet_Video(Manual=False):
@@ -158,12 +158,13 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
 def ShowMessage(MessageID):    
     import gui_auth
     message = __language__(MessageID)
-    ui = gui_auth.GUI( "script-xbTweet-generic.xml" , os.getcwd(), "Default")
+    ui = gui_auth.GUI( "script-xbTweet-Generic.xml" , os.getcwd(), "Default")
     ui.setParams ("message", __language__(30042), message, 0)
     ui.doModal()
     del ui
     
 ###Path handling
+BASE_PATH = xbmc.translatePath( os.getcwd() )
 RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) )
 BASE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'lib' ) )
 LANGUAGE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'language' ) )
@@ -283,7 +284,8 @@ Debug( '::Settings::', True)
 
 ###Initial checks
 #API Validation
-if not Twitter_Login():
+api, auth = Twitter_Login()
+if not api:
     ShowMessage(40007) #OAuth starts
     bRun = False
 
@@ -296,7 +298,7 @@ if ((CheckVersion() != __version__ ) and (bShowWhatsNew)):
         usock.close()
 
         import gui_welcome
-        ui = gui_welcome.GUI( "script-xbTweet-generic.xml" , os.getcwd(), "Default")
+        ui = gui_welcome.GUI( "script-xbTweet-Generic.xml" , os.getcwd(), "Default")
         ui.setParams ("message",  __language__(30043), message, 0)
         ui.doModal()
         del ui
@@ -325,7 +327,7 @@ if (bShortcut): bRun = False
 if ((bStartup and bAutoStart) or bRun):
     Debug(  'Entering idle state, waiting for media playing...', False)
 
-    twittersmallicon = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'skins', 'default', 'media', 'smalltwitter.png' ) )
+    twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'default', 'media', 'smalltwitter.png' ) )
     xbmc.executebuiltin('Notification(xbTweet,' + __language__(30044) + ',3000,' + twittersmallicon + ')')
     
     #we need the last id
@@ -365,7 +367,7 @@ if ((bStartup and bAutoStart) or bRun):
             CheckIfPlayingAndTweet_Video()
         if (bAutoTweetMusic):
             CheckIfPlayingAndTweet_Music()
-
+        #NotifyInterval = 0.5
         if ((timeline_interval * 5) % (NotifyInterval * 60) == 0):
             Debug('Notification Interval Reached...', False)
             timeline_interval = 0
@@ -375,7 +377,7 @@ if ((bStartup and bAutoStart) or bRun):
                 lastid = newNotification.id
                 if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused
                 import Window_Notification
-                ui = Window_Notification.GUI( "script-xbTweet-Notification.xml" , os.getcwd(), "Default")
+                ui = Window_Notification.GUI( "script-xbTweet-Notification.xml" , BASE_PATH, "Default")
                 ui.setTwitterText (newNotification.text, "mention", newNotification.user.screen_name, newNotification.user.profile_image_url, newNotification.created_at, newNotification.source)
                 ui.doModal()
                 if xbmc.getCondVisibility('Player.Paused'): xbmc.Player().pause() # if Paused, un-pause
@@ -387,7 +389,7 @@ if ((bStartup and bAutoStart) or bRun):
                 lastDMid = newNotification.id
                 if not xbmc.getCondVisibility('Player.Paused') : xbmc.Player().pause() #Pause if not paused
                 import Window_Notification
-                ui = Window_Notification.GUI( "script-xbTweet-Notification.xml" , os.getcwd(), "Default")
+                ui = Window_Notification.GUI( "script-xbTweet-Notification.xml" , BASE_PATH, "Default")
                 ui.setTwitterText (newNotification.text, "direct_message", newNotification.sender.screen_name, newNotification.sender.profile_image_url, newNotification.created_at, "")
                 ui.doModal()
                 if xbmc.getCondVisibility('Player.Paused'): xbmc.Player().pause() # if Paused, un-pause
@@ -396,18 +398,21 @@ if ((bStartup and bAutoStart) or bRun):
             newTweets = None
             newTweets = CheckForTimeline(lastTweetid)
             if (newTweets != None):
-                lastTweetid = newTweets[0].id
-                import Window_Fall
-                tweet = newTweets[0]
-                ui = Window_Fall.GUI( "script-xbTweet-Fall.xml" , os.getcwd(), "Default")
-                ui.setTwitterText (tweet.text, "tweet", tweet.user.screen_name, tweet.user.profile_image_url, tweet.created_at, tweet.source)
-                ui.show()
-                ui.onInit()
-                try:
-                    print 'position: ' + ui.getPosition()
-                except:
-                    pass
-
+                #import Window_Fall
+                counter = 0
+                
+                while (counter < len(newTweets)):
+                    tweet = newTweets[counter]
+                    import Window_Fall
+                    ui = Window_Fall.GUI( "script-xbTweet-Fall.xml" , BASE_PATH, "Default", True)
+                    ui.setTwitterText (tweet.text, "tweet", tweet.user.screen_name, tweet.user.profile_image_url, tweet.created_at, tweet.source, counter)
+                    ui.show()
+                    ui.onInit()
+                    counter = counter + 1
+                    time.sleep(0.1)                        
+                lastTweetid = newTweets[counter-1].id
+                #lastTweetid = 8113088400
+                 
         timeline_interval = timeline_interval + 1
         time.sleep(5)
 

@@ -96,7 +96,7 @@
 				  <height>50</height>
 				  <visible>true</visible>
 				  <colordiffuse>FFFFFFFF</colordiffuse>
-				  <label>Close</label>
+				  <label>$LOCALIZE[30052]</label>
 				  <font>font18</font>
 				  <textcolor>FFFFFFFF</textcolor>
 				  <disabledcolor>80FFFFFF</disabledcolor>
@@ -119,7 +119,7 @@
 				  <height>50</height>
 				  <visible>true</visible>
 				  <colordiffuse>FFFFFFFF</colordiffuse>
-				  <label>REPLY</label>
+				  <label>$LOCALIZE[30053]</label>
 				  <font>font18</font>
 				  <textcolor>FFFFFFFF</textcolor>
 				  <disabledcolor>80FFFFFF</disabledcolor>
