@@ -17,36 +17,17 @@ CONTROL_TWITTER_TEXT = 300
 CONTROL_TWITTER_IMAGE = 301
 CONTROL_TWITTER_FROM = 302
 
-LINE_CHARS = 35
-MAX_LINE_CHARS = 65
+LINE_CHARS = 45
+MAX_LINE_CHARS = 50
 CLOSE_TIMEOUT = 10
 
+WINDOW_START = 10
 WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 100
 
 MEDIA_RESOURCE_PATH = xbmc.translatePath( 'special://home/scripts/xbtweet/resources/skins/default/media' )
 
-
-### The adding button Code  (only really need this bit)
-def setupButtons(self,x,y,w,h,a="Vert",f=None,nf=None):
-    self.numbut  = 0
-    self.butx = x
-    self.buty = y
-    self.butwidth = w
-    self.butheight = h
-    self.butalign = a
-    self.butfocus_img = f
-    self.butnofocus_img = nf
- 
-def addButon(self,text):
-    if self.butalign == "Hori":
-        c =  xbmcgui.ControlButton(self.butx + (self.numbut * self.butwidth),self.buty,self.butwidth,self.butheight,text)
-        self.addControl(c)
-    elif self.butalign == "Vert":
-        c = xbmcgui.ControlButton(self.butx ,self.buty + (self.numbut * self.butheight),self.butwidth,self.butheight,text)
-        self.addControl(c)
-    self.numbut += 1
-    return c
-### The End of adding button Code 
+SKIN_WIDTH = 600
 
 class GUI( xbmcgui.WindowXMLDialog ):
     class CloseCounter(Thread):
@@ -75,6 +56,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
     global tweetcreatedat
     global tweetappsource
     global tweetfromstring
+    global windowid
     
     terminate = False
     stoptimer = False
@@ -83,7 +65,8 @@ class GUI( xbmcgui.WindowXMLDialog ):
     tweetsource = ""
     tweetsourceimage = "twitterpic.png"
     tweetfromstring = ""
-
+    windowid = 0
+    
     def __init__( self, *args, **kwargs):
         pass
 
@@ -91,9 +74,13 @@ class GUI( xbmcgui.WindowXMLDialog ):
         global twittertext
         global tweetsourceimage
         global tweetfromstring
+        global windowid
+        
+        self.getControl( 1 ).setPosition(self.getControl(1).getPosition()[0],WINDOW_START+(windowid*WINDOW_HEIGHT))
+        
         self.getControl( CONTROL_TWITTER_FROM ).setLabel( tweetfromstring )
         self.getControl( CONTROL_TWITTER_TEXT ).setLabel( twittertext )        
-        self.getControl( CONTROL_TWITTER_IMAGE ).setImage ( tweetsourceimage )
+        #self.getControl( CONTROL_TWITTER_IMAGE ).setImage ( tweetsourceimage )
 
         counter = self.CloseCounter(self, CLOSE_TIMEOUT)
         counter.start()
@@ -133,7 +120,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
             terminate = True
             self.exit_script()
 
-    def setTwitterText(self, text, dtype, tsource, tsourceimage, tcreatedat, tappsource):
+    def setTwitterText(self, text, dtype, tsource, tsourceimage, tcreatedat, tappsource, posy):
         global twittertext
         global tweetsource
         global tweetsourceimage
@@ -141,22 +128,35 @@ class GUI( xbmcgui.WindowXMLDialog ):
         global tweetappsource
         global tweetfromstring
         global dialogtype
-        
+        global windowid
+                
         dialogtype = dtype
         tweetsource = tsource
         twittertext = text
         tweetsourceimage = tsourceimage
         tweetcreatedat = tcreatedat
         tweetappsource = tappsource
-
-        dt2 = datetime.datetime.utcnow()
-        dateDiff = dt2 - tweetcreatedat
+        windowid = posy
+        
+        dateDiff = datetime.datetime.utcnow() - datetime.datetime.utcnow()
+        try:
+            dt2 = datetime.datetime.utcnow()
+            dateDiff = dt2 - tweetcreatedat
+        except:
+            pass
         if dialogtype == 'mention':
             tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago from ' + tweetappsource
         if dialogtype == 'direct_message':
             tweetfromstring = 'DIRECT MESSAGE from ' + tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago'
         if dialogtype == 'tweet':
             tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago from ' + tweetappsource
+
+
+        if len(twittertext) > LINE_CHARS:
+            splitindex = twittertext.find(' ', LINE_CHARS)
+            if splitindex >= MAX_LINE_CHARS:
+                splitindex = twittertext.find(' ', LINE_CHARS-10)
+            twittertext = twittertext[0:splitindex] + '[CR]' + twittertext[splitindex+1:len(twittertext)]
             
-        if len(twittertext) >= MAX_LINE_CHARS:
-            twittertext = twittertext[0:MAX_LINE_CHARS-3] + '...'
+        #if len(twittertext) >= MAX_LINE_CHARS:
+        #    twittertext = twittertext[0:MAX_LINE_CHARS-3] + '...'

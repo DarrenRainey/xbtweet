@@ -91,6 +91,7 @@ class Stream(object):
         self.body = None
 
     def _run(self):
+        print 'run....'        
         # setup
         self.auth.apply_auth(None, None, self.headers, None)
 

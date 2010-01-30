@@ -28,7 +28,7 @@
 
 				<width>800</width>
 
-				<height>400</height>
+				<height>450</height>
 				<texture border="40">default-panel.png</texture>
 
 			</control>
@@ -100,17 +100,37 @@
 				<height>1</height>
 				<texture>separator.png</texture>
 			</control>
+            <control type="radiobutton" id="1007">
+                <description>Dont show again</description>
+                <posx>40</posx>
+                <posy>305</posy>
+                <width>700</width>
+                <height>30</height>
+                <align>left</align>
+                <aligny>center</aligny>
+                <label>$LOCALIZE[30051]</label>
+                <font>font13</font>
+                <textcolor>white</textcolor>
+                <texturefocus>amt-input-focus.png</texturefocus>
+                <texturenofocus>amt-input-nofocus.png</texturenofocus>
+                <textureradiofocus>amt-settings-check-box.png</textureradiofocus>
+                <textureradionofocus>amt-settings-check-boxNF.png</textureradionofocus>
+                <disabledcolor>60d0d0d0</disabledcolor>
+                <shadowcolor>ff000000</shadowcolor>
+				<colordiffuse>FFFFFFFF</colordiffuse>
+				<ondown>1001</ondown>
+            </control>
 			<control type="button" id="1001">
 				  <description>Close</description>
 				  <posx>300</posx>
-				  <posy>315</posy>
+				  <posy>355</posy>
 				  <width>200</width>
 				  <height>40</height>
 				  <visible>true</visible>
 				  <colordiffuse>FFFFFFFF</colordiffuse>
-				  <label>Close</label>
+				  <label>$LOCALIZE[30052]</label>
 				  <font>font18</font>
-				  <textcolor>FFFFFFFF</textcolor>
+				  <textcolor>white</textcolor>
 				  <disabledcolor>80FFFFFF</disabledcolor>
 				  <align>center</align>
 				  <aligny>center</aligny>
@@ -118,9 +138,9 @@
 				  <textoffsety></textoffsety>
 				  <pulseonselect></pulseonselect>
 				  <onclick></onclick>
-				  <onup></onup>
+				  <onup>1007</onup>
 				  <ondown></ondown>
-				  <onleft>1002</onleft>
+				  <onleft></onleft>
 				  <onright></onright>
 			</control>
 		</control>

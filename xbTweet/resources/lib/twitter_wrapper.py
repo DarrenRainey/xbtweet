@@ -16,6 +16,7 @@ __settings__ = xbmc.Settings( path=os.getcwd() )
 
 RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources' ) )
 CONFIG_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'settings.cfg') )
+MEDIA_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'skins' ) )
 
 bOAuth = False
 if (__settings__.getSetting( "OAuth" ) == 'true'): bOAuth = True
@@ -143,7 +144,7 @@ def Twitter_Login():
             return False
             
     Debug( '::Login::', True) 
-    return api
+    return api, auth
        
 def VerifyAuthentication(api):
     Debug( '::VerifyAuthentication::', True)   
@@ -163,7 +164,7 @@ def VerifyAuthentication(api):
 def ShowMessage(MessageID):    
     import gui_auth
     message = __language__(MessageID)
-    ui = gui_auth.GUI( "script-xbTweet-generic.xml" , os.getcwd(), "Default")
+    ui = gui_auth.GUI( "script-xbTweet-Generic.xml" , os.getcwd(), "Default")
     ui.setParams ("message", __language__(30042), message, 0)
     ui.doModal()
     del ui
@@ -186,7 +187,7 @@ def CheckForMentions(lastid):
         return None    
     mentions = ""
     Debug ('Checking for new mentions...', True)
-    api = Twitter_Login()
+    api, auth = Twitter_Login()
     if (CheckAPIRate(api) <= 0):
         return None
     try:
@@ -208,14 +209,14 @@ def CheckForTimeline(lastid):
         return None    
     tweets = None
     Debug ('Checking for new tweets...', True)
-    api = Twitter_Login()
+    api, auth = Twitter_Login()
     if (CheckAPIRate(api) <= 0):
         return None
     try:
         if lastid == 0:
             tweets = api.home_timeline(count=1)
         else:
-            tweets = api.home_timeline(since_id=lastid, count=5)
+            tweets = api.home_timeline(since_id=lastid, count=6)
     except:
         Debug ('Error fetching tweets', False)
 
@@ -230,7 +231,7 @@ def CheckForDM(lastid):
         return None
     mentions = ""
     Debug ('Checking for new DMs...', True)
-    api = Twitter_Login()
+    api, auth = Twitter_Login()
     if (CheckAPIRate(api) <= 0):
         return None
     try:
@@ -261,9 +262,10 @@ def UpdateStatus(update, Manual=False):
     if (update != lasttweet):
         lasttweet  = update        
         Debug ('Tweet: ' + update, False)
-        api = Twitter_Login()
+        api, auth = Twitter_Login()
         if (CheckAPIRate(api) <= 0):
             return None
         update = api.update_status(update)
-        xbmc.executebuiltin('Notification(xbTweet,Tweet away...,2000)')
-
+        twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'default', 'media', 'smalltwitter.png' ) )
+        print twittersmallicon
+        xbmc.executebuiltin('Notification(xbTweet,' + __language__(30050) + ',2000,' + twittersmallicon + ')')
