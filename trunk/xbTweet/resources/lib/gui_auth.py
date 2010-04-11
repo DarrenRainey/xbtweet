@@ -11,6 +11,7 @@ CONTROL_DONTSHOW_BUTTON = 1007
 CONTROL_HEADER_TEXT = 3001
 CONTROL_MESSAGE_TEXT = 3002
 
+__language__ = xbmc.Language( os.getcwd() ).getLocalizedString
 
 class GUI( xbmcgui.WindowXMLDialog ):
     class CloseCounter(threading.Thread):
