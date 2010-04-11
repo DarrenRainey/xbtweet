@@ -17,6 +17,7 @@ This can easily be achieved by opening the script's settings page and modifying 
 %SONGTITLE% - Name of the song, i.e. Yellow<br/>
 %ALBUMTITLE% - Title of the album, i.e. X&Y<br/>
 <br/>
+<!--
 As of version 0.0.894 you can use the following tags:<br/>
 %TAG1% - Tag #1<br/>
 %TAG2% - Tag #2<br/>
@@ -24,4 +25,5 @@ As of version 0.0.894 you can use the following tags:<br/>
 %TAGS% - Adds all three tags at once separated with spaces. (EG: Tag1 Tag2 Tag3)<br/>
 %URL% - bit.ly url for information lookup<br/>
 <br/><br/>
+-->
 If you wish me to include more information, please add your comments below and it can easily be added.
