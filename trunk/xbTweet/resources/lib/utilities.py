@@ -4,7 +4,7 @@ import xbmc
 import string
 
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
-__version__ = "0.0.904"
+__version__ = "0.0.999"
 
 #Path handling
 LANGUAGE_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'language' ) )

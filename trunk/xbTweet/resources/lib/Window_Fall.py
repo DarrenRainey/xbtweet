@@ -8,6 +8,7 @@ import datetime
 from threading import *
 from twitter_wrapper import *
 
+__language__ = xbmc.Language( os.getcwd() ).getLocalizedString
 
 EXIT_SCRIPT = ( 6, 10, 247, 275, 61467, 216, 257, 61448, )
 CANCEL_DIALOG = EXIT_SCRIPT + ( 216, 257, 61448, 61467 ,)
@@ -17,17 +18,17 @@ CONTROL_TWITTER_TEXT = 300
 CONTROL_TWITTER_IMAGE = 301
 CONTROL_TWITTER_FROM = 302
 
-LINE_CHARS = 45
-MAX_LINE_CHARS = 50
+LINE_CHARS = 62
+MAX_LINE_CHARS = 70
 CLOSE_TIMEOUT = 10
 
-WINDOW_START = 10
-WINDOW_WIDTH = 600
+WINDOW_START = 5
+WINDOW_WIDTH = 650
 WINDOW_HEIGHT = 100
 
 MEDIA_RESOURCE_PATH = xbmc.translatePath( 'special://home/scripts/xbtweet/resources/skins/default/media' )
 
-SKIN_WIDTH = 600
+SKIN_WIDTH = 650
 
 class GUI( xbmcgui.WindowXMLDialog ):
     class CloseCounter(Thread):
@@ -145,11 +146,11 @@ class GUI( xbmcgui.WindowXMLDialog ):
         except:
             pass
         if dialogtype == 'mention':
-            tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago from ' + tweetappsource
+            tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' ' + __language__(30055) + ' ' + tweetappsource
         if dialogtype == 'direct_message':
-            tweetfromstring = 'DIRECT MESSAGE from ' + tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago'
+            tweetfromstring = __language__(30057) + ' ' + tsource + ' - ' + str(dateDiff.seconds / 60) + ' ' + __language__(30056)
         if dialogtype == 'tweet':
-            tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago from ' + tweetappsource
+            tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' ' + __language__(30055) + ' ' + tweetappsource
 
 
         if len(twittertext) > LINE_CHARS:

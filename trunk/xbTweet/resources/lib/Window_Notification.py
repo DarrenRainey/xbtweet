@@ -8,6 +8,7 @@ import datetime
 from threading import *
 from twitter_wrapper import *
 
+__language__ = xbmc.Language( os.getcwd() ).getLocalizedString
 
 EXIT_SCRIPT = ( 6, 10, 247, 275, 61467, 216, 257, 61448, )
 CANCEL_DIALOG = EXIT_SCRIPT + ( 216, 257, 61448, 61467 ,)
@@ -57,12 +58,12 @@ class GUI( xbmcgui.WindowXMLDialog ):
             i = 0
             while (i < self.maxcount) and (not terminate):
                 i = i+1
-                self.ui.getControl( CONTROL_CLOSE_BUTTON ).setLabel('CLOSE (' +str( self.maxcount-i ) + ')')
+                self.ui.getControl( CONTROL_CLOSE_BUTTON ).setLabel(__language__(30052) + '(' +str( self.maxcount-i ) + ')')
                 time.sleep(1)
                 if (i == self.maxcount):
                     self.ui.exit_script()
                 if (stoptimer):
-                    self.ui.getControl( CONTROL_CLOSE_BUTTON ).setLabel('CLOSE')
+                    self.ui.getControl( CONTROL_CLOSE_BUTTON ).setLabel(__language__(30052))
                     break
                 
     global terminate
@@ -90,6 +91,8 @@ class GUI( xbmcgui.WindowXMLDialog ):
         global twittertext
         global tweetsourceimage
         global tweetfromstring
+        
+        self.getControl( CONTROL_REPLY_BUTTON ).setLabel( __language__(30053) )
         self.getControl( CONTROL_TWITTER_FROM ).setLabel( tweetfromstring )
         self.getControl( CONTROL_TWITTER_TEXT ).setLabel( twittertext )        
         self.getControl( CONTROL_TWITTER_IMAGE ).setImage ( tweetsourceimage )
@@ -151,9 +154,9 @@ class GUI( xbmcgui.WindowXMLDialog ):
         dt2 = datetime.datetime.utcnow()
         dateDiff = dt2 - tweetcreatedat
         if dialogtype == 'mention':
-            tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago from ' + tweetappsource
+            tweetfromstring = tsource + ' - ' + str(dateDiff.seconds / 60) + ' ' + __language__(30055) + ' ' + tweetappsource
         if dialogtype == 'direct_message':
-            tweetfromstring = 'DIRECT MESSAGE from ' + tsource + ' - ' + str(dateDiff.seconds / 60) + ' minutes ago'
+            tweetfromstring = __language__(30057) + ' ' + tsource + ' - ' + str(dateDiff.seconds / 60) + ' ' + __language__(30056)
         
         if len(twittertext) > LINE_CHARS:
             splitindex = twittertext.find(' ', LINE_CHARS)

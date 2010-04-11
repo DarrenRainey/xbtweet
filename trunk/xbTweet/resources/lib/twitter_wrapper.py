@@ -19,17 +19,28 @@ CONFIG_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'setti
 MEDIA_RESOURCE_PATH = xbmc.translatePath( os.path.join( os.getcwd(), 'resources', 'skins' ) )
 
 bOAuth = False
+bUseAnotherAccount = False
 if (__settings__.getSetting( "OAuth" ) == 'true'): bOAuth = True
+if (__settings__.getSetting( "UseAnotherAccount" ) == 'true'): bUseAnotherAccount = True
+
 username = __settings__.getSetting( "Username" )
 password = __settings__.getSetting( "Password" )
+username2 = __settings__.getSetting( "Username2" )
+password2 = __settings__.getSetting( "Password2" )
+
+consumer_key = "cpAC0s1CtNpVd7lP30Q2tg"
+consumer_secret = "8bV5un2RxuMeEBdrlYafVZo8F4pIgR8hxXjf1457L80"
 
 lasttweet = ""
 
-def Twitter_Login():
+def Twitter_Login(bWhichAccount = False):
     Debug( '::Login::' , True)
 
     global username
     global password
+    global username2
+    global password2
+    global bUseAnotherAccount
     global bOAuth
     
     if (bOAuth):
@@ -42,14 +53,14 @@ def Twitter_Login():
             twitter_key = config.get('Twitter Account', 'key')
             twitter_secret = config.get('Twitter Account', 'secret')
 
-            auth = OAuthHandler('OAWDRnhOHMLpLgEaoWFNA', '8Ros5aIic3L5uoASMZ1JxyNyGlS9xM1Gh0jsReWDws')
+            auth = OAuthHandler(consumer_key, consumer_secret)
             auth.set_access_token(twitter_key, twitter_secret)
             api = API(auth)
 
             bVerified, sError = VerifyAuthentication(api)
             if (not bVerified):
                 ShowMessage(40003) #OAuth starts
-                auth = OAuthHandler('OAWDRnhOHMLpLgEaoWFNA', '8Ros5aIic3L5uoASMZ1JxyNyGlS9xM1Gh0jsReWDws')
+                auth = OAuthHandler(consumer_key, consumer_secret)
                 redirect_url = auth.get_authorization_url()
                 webbrowser.open(redirect_url)
                 keyboard = xbmc.Keyboard('',__language__(30000))
@@ -87,7 +98,7 @@ def Twitter_Login():
         else:
             #OAuth not defined
             ShowMessage(40006) #OAuth starts
-            auth = OAuthHandler('OAWDRnhOHMLpLgEaoWFNA', '8Ros5aIic3L5uoASMZ1JxyNyGlS9xM1Gh0jsReWDws')
+            auth = OAuthHandler(consumer_key, consumer_secret)
             redirect_url = auth.get_authorization_url()
             webbrowser.open(redirect_url)
             keyboard = xbmc.Keyboard('',__language__(30000))
@@ -122,6 +133,14 @@ def Twitter_Login():
                 Debug( 'Exception: Login: ' + str(sys.exc_info()[1]), True)
                 return False
     else:
+        username = __settings__.getSetting( "Username" )
+        password = __settings__.getSetting( "Password" )
+        username2 = __settings__.getSetting( "Username2" )
+        password2 = __settings__.getSetting( "Password2" )
+        
+        if (bWhichAccount):
+            username = username2
+            password = password2
         Debug( 'Using Plain Authentication, ' + username + ':' + password, True)
         if (username == '' or password == ''):
             ShowMessage(40001)
@@ -154,7 +173,7 @@ def VerifyAuthentication(api):
     if (api):
         try:
             if (api.verify_credentials() != False): bVerified = True
-            else: "Failed to verify credentials: api.verify_credentials()"
+            #else: "Failed to verify credentials: api.verify_credentials()"
         except:
             sError = "Exception: Failed to verify credentials: api.verify_credentials()"
 
@@ -179,7 +198,7 @@ def CheckAPIRate(api):
         Debug( 'Error fetching API count: ' + str(sys.exc_info()[1]), True)
         return 0
     
-    Debug ('API Count Check: ' + str(apicallsleft), False)
+    Debug ('API Count Check: ' + str(apicallsleft), True)
     return count
     
 def CheckForMentions(lastid):
@@ -187,7 +206,7 @@ def CheckForMentions(lastid):
         return None    
     mentions = ""
     Debug ('Checking for new mentions...', True)
-    api, auth = Twitter_Login()
+    api, auth = Twitter_Login(True)
     if (CheckAPIRate(api) <= 0):
         return None
     try:
@@ -209,7 +228,7 @@ def CheckForTimeline(lastid):
         return None    
     tweets = None
     Debug ('Checking for new tweets...', True)
-    api, auth = Twitter_Login()
+    api, auth = Twitter_Login(True)
     if (CheckAPIRate(api) <= 0):
         return None
     try:
@@ -231,7 +250,7 @@ def CheckForDM(lastid):
         return None
     mentions = ""
     Debug ('Checking for new DMs...', True)
-    api, auth = Twitter_Login()
+    api, auth = Twitter_Login(True)
     if (CheckAPIRate(api) <= 0):
         return None
     try:
@@ -265,7 +284,11 @@ def UpdateStatus(update, Manual=False):
         api, auth = Twitter_Login()
         if (CheckAPIRate(api) <= 0):
             return None
-        update = api.update_status(update)
-        twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'default', 'media', 'smalltwitter.png' ) )
-        print twittersmallicon
-        xbmc.executebuiltin('Notification(xbTweet,' + __language__(30050) + ',2000,' + twittersmallicon + ')')
+        try:
+            update = api.update_status(update)
+            twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'default', 'media', 'smalltwitter.png' ) )
+            xbmc.executebuiltin('Notification(xbTweet,' + __language__(30050) + ',2000,' + twittersmallicon + ')')
+        except TweepError, (strerror):
+            Debug ('Twitter API error: {' + str(strerror) + '}', True)
+        except:
+            Debug ("Twitter API error: {unknown}", True)
