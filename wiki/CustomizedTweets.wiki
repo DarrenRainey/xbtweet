@@ -7,7 +7,10 @@ You can customize your tweets to include information from the playing movie/tv s
 This can easily be achieved by opening the script's settings page and modifying the relevant tweet to include one of the following tags:<br/>
 %SHOWNAME% - TV Show name, i.e. Family Guy<br/>
 %SEASON% - Season number, i.e. 1<br/>
+%SEASON_PADDED% - Season number (padded), i.e. 01<br/>
 %EPISODENAME% - The title of the episode, i.e. The Attic<br/>
+%EPISODENUMBER% - The index of the episode, i.e. 1<br/>
+%EPISODENUMBER_PADDED% - The index of the episode (padded), i.e. 01<br/>
 %MOVIETITLE% - The title of the movie, i.e. Iron Man<br/>
 %MOVIEYEAR% - The year of production, i.e. 2007<br/>
 %ARTISTNAME% - Performer's name, i.e. Coldplay<br/>
