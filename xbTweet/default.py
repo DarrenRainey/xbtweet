@@ -323,12 +323,12 @@ if (not xbmc.getCondVisibility('videoplayer.isfullscreen') and not bShortcut and
     Debug(  'Pressed in scripts menu', False)        
     SetAutoStart(bAutoStart)
     if (FollowAuthor and bFirstRun):
-        Debug('Following itayw', True)
+        Debug('Following xbmcblog', True)
         try:
             api = CreateAPIObject()        
-            api.create_friendship('itayw')
+            api.create_friendship('xbmcblog')
         except:
-            Debug('Failed to follow itayw', True)
+            Debug('Failed to follow xbmcblog', True)
 
 if (not bRunBackground): bRun = False
 if (bShortcut): bRun = False

@@ -33,8 +33,11 @@ class GUI( xbmcgui.WindowXMLDialog ):
         pass
 
     def onInit( self ):
+        self.getControl( CONTROL_CLOSE_BUTTON ).setLabel( __language__(30052) )
+        
         self.getControl( CONTROL_HEADER_TEXT ).setLabel( self.headertext )
-        self.getControl( CONTROL_MESSAGE_TEXT ).setText( self.message )        
+        self.getControl( CONTROL_MESSAGE_TEXT ).setText( self.message )
+        
         self.getControl( CONTROL_DONTSHOW_BUTTON ).setVisible(False)
         #counter = self.CloseCounter(self, CLOSE_TIMEOUT)
         #counter.start()
