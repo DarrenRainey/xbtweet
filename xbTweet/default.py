@@ -13,14 +13,18 @@ __scriptname__ = "xbTweet"
 __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
-__credits__ = "@blittan, @gergtrebles"
-__version__ = "0.0.904"
+__credits__ = ""
+__version__ = "0.0.999"
 __XBMC_Revision__ = ""
+
+def addPadding(number):
+    if len(number) == 1:
+        number = '0' + number
+    return number
 
 def CheckIfPlayingAndTweet_Video(Manual=False):
     sType = ""
     if xbmc.Player().isPlayingVideo():
-        #Debug( 'Video is playing, checking if tweet is needed...', True)
         bLibraryExcluded = False
         bRatingExcluded = False
         bPathExcluded = False
@@ -62,7 +66,10 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
             title = unicode(CustomTweet_TVShow , 'utf-8')           
             title = title.replace('%SHOWNAME%', unicode(xbmc.getInfoLabel("VideoPlayer.TvShowTitle"), 'utf-8'))
             title = title.replace('%EPISODENAME%', unicode(xbmc.getInfoLabel("VideoPlayer.Title"), 'utf-8'))
+            title = title.replace('%EPISODENUMBER%', unicode(xbmc.getInfoLabel("VideoPlayer.Episode"), 'utf-8'))
+            title = title.replace('%EPISODENUMBER_PADDED%', unicode(addPadding(xbmc.getInfoLabel("VideoPlayer.Episode")), 'utf-8'))            
             title = title.replace('%SEASON%', unicode(xbmc.getInfoLabel("VideoPlayer.Season"), 'utf-8'))
+            title = title.replace('%SEASON_PADDED%', unicode(addPadding(xbmc.getInfoLabel("VideoPlayer.Season")), 'utf-8'))            
 
             if (__settings__.getSetting( "AddBitly" ) == 'true'):
                 try:
@@ -104,7 +111,7 @@ def CheckIfPlayingAndTweet_Video(Manual=False):
                 try:
                     bitlyAPI = Api(login="mrkav",apikey="R_f346d82149f7ae7fc8d2ee62d2854a56")
                     short = bitlyAPI.shorten(imdburl)    
-                    Debug( "bit.ly URL = %s" % short, False)            
+                    Debug( "bit.ly URL = %s" % short, True)            
                 except:
                     short = ""
                     pass
@@ -143,7 +150,7 @@ def CheckIfPlayingAndTweet_Music(Manual=False):
                 try:
                     bitlyAPI = Api(login="mrkav",apikey="R_f346d82149f7ae7fc8d2ee62d2854a56")
                     short = bitlyAPI.shorten(imdburl)    
-                    Debug( "bit.ly URL = %s" % short, False)            
+                    Debug( "bit.ly URL = %s" % short, True)            
                 except:
                     short = ""
                     pass
@@ -191,6 +198,7 @@ bShortcut = False
 lasttitle = ""
 
 bOAuth = False
+bUseAnotherAccount = False
 bAutoStart = False
 bRunBackground = False
 bAutoTweetVideo = False
@@ -211,6 +219,8 @@ bNotifyDirect = False
 bShowWhatsNew = False
 
 if (__settings__.getSetting( "OAuth" ) == 'true'): bOAuth = True
+if (__settings__.getSetting( "UseAnotherAccount" ) == 'true'): bUseAnotherAccount = True
+
 if (__settings__.getSetting( "AutoStart" ) == 'true'): bAutoStart = True
 if (__settings__.getSetting( "RunBackground" ) == 'true'): bRunBackground = True
 if (__settings__.getSetting( "AutoTweetVideo" ) == 'true'): bAutoTweetVideo = True
@@ -303,7 +313,7 @@ if ((CheckVersion() != __version__ ) and (bShowWhatsNew)):
         ui.doModal()
         del ui
 
-        bRun = False
+        #bRun = True
         WriteVersion(__version__)
     except:
         Debug('Failed to validate if new version', False)
@@ -358,7 +368,7 @@ if ((bStartup and bAutoStart) or bRun):
         lastTweetid = newTweets[0].id
     else:
         lastTweetid = 0
-    #lastTweetid = 8113088400
+    #lastTweetid = 11986090060
     Debug('Last Tweet id: ' + str(lastTweetid), True)    
 
     while 1:
@@ -411,7 +421,7 @@ if ((bStartup and bAutoStart) or bRun):
                     counter = counter + 1
                     time.sleep(0.1)                        
                 lastTweetid = newTweets[counter-1].id
-                #lastTweetid = 8113088400
+                #lastTweetid = 11986090060
                  
         timeline_interval = timeline_interval + 1
         time.sleep(5)
