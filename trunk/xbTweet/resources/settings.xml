@@ -19,7 +19,7 @@
   <setting id="TagsTweet" type="text" label="30014" default="#xbmc #xbtweet #nowplaying" />
 
   <setting type="lsep" label="Timeline Notifications" />
-  <setting id="UseAnotherAccount" type="bool" option="hidden" visible="eq(-14,false)" enable="eq(-14,false)" label="30054" default="true" />
+  <setting id="UseAnotherAccount" type="bool" option="hidden" visible="eq(-14,false)" enable="eq(-14,false)" label="30054" default="false" />
   <setting id="Username2" type="text" label="30013" option="hidden" default="" visible="eq(-1,true) + eq(-15,false)" enable="eq(-1,true) + eq(-15,false)" />
   <setting id="Password2" type="text" option="hidden" visible="eq(-2,true) + eq(-16,false)" enable="eq(-2,true) + eq(-16,false)" label="30015" default="" />
   <setting id="NotifyInterval" type="enum" label="30046" values="3|5|10|60|120|180" default="2" />
