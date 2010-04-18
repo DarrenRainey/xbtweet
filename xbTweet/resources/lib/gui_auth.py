@@ -2,6 +2,7 @@ import xbmc
 import xbmcgui
 import time
 import threading
+import os
 
 EXIT_SCRIPT = ( 6, 10, 247, 275, 61467, 216, 257, 61448, )
 CANCEL_DIALOG = EXIT_SCRIPT + ( 216, 257, 61448, 61467 ,)
