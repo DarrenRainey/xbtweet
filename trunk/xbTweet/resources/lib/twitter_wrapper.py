@@ -42,6 +42,7 @@ def Twitter_Login(bWhichAccount = False):
     global password2
     global bUseAnotherAccount
     global bOAuth
+   
     
     if (bOAuth):
         Debug( 'Using OAuth', True)
@@ -70,7 +71,7 @@ def Twitter_Login(bWhichAccount = False):
                 else:
                     #Maybe using text based browser or XBOX
                     ShowMessage(40005)
-                    return False
+                    return False, False
                 try:
                     token = auth.get_access_token(password)
                     twitter_key = token.key
@@ -78,7 +79,7 @@ def Twitter_Login(bWhichAccount = False):
                 except:
                     #PIN Number incorrect
                     ShowMessage(40004)
-                    return False
+                    return False, False
                 Debug( 'Writing Configuration Details...', True)
                 config = ConfigParser.RawConfigParser()
                 config.add_section('Twitter Account')
@@ -91,10 +92,10 @@ def Twitter_Login(bWhichAccount = False):
                     api = API(auth)
                     bVerified, sError = VerifyAuthentication(api)
                     if (not bVerified):
-                        return False
+                        return False, False
                 except:
                     Debug( 'Exception: Login: ' + str(sys.exc_info()[1]), True)
-                    return False
+                    return False, False
         else:
             #OAuth not defined
             ShowMessage(40006) #OAuth starts
@@ -108,7 +109,7 @@ def Twitter_Login(bWhichAccount = False):
             else:
                 #Maybe using text based browser or XBOX
                 ShowMessage(40005)
-                return False
+                return False, False
             try:
                 token = auth.get_access_token(password)
                 twitter_key = token.key
@@ -116,7 +117,7 @@ def Twitter_Login(bWhichAccount = False):
             except:
                 #PIN Number incorrect
                 ShowMessage(40004)
-                return False
+                return False, False
             Debug( 'Writing Configuration Details...', True)
             config = ConfigParser.RawConfigParser()
             config.add_section('Twitter Account')
@@ -128,10 +129,10 @@ def Twitter_Login(bWhichAccount = False):
                 api = API(auth)
                 bVerified, sError = VerifyAuthentication(api)
                 if (not bVerified):
-                    return False
+                    return False, False
             except:
                 Debug( 'Exception: Login: ' + str(sys.exc_info()[1]), True)
-                return False
+                return False, False
     else:
         username = __settings__.getSetting( "Username" )
         password = __settings__.getSetting( "Password" )
@@ -145,7 +146,7 @@ def Twitter_Login(bWhichAccount = False):
         if (username == '' or password == ''):
             ShowMessage(40001)
             __settings__.openSettings()
-            return False
+            return False, False
 
         try:
             auth = BasicAuthHandler(username, password)
@@ -154,13 +155,13 @@ def Twitter_Login(bWhichAccount = False):
             Debug( 'Exception: Login: ' + str(sys.exc_info()[1]), True)
             ShowMessage(40002)
             __settings__.openSettings()
-            return False
+            return False, False
 
         bVerified, sError = VerifyAuthentication(api)
         if (not bVerified):
             ShowMessage(40002)
             __settings__.openSettings()
-            return False
+            return False, False
             
     Debug( '::Login::', True) 
     return api, auth
