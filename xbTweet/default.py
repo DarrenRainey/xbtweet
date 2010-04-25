@@ -14,7 +14,7 @@ __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
 __credits__ = ""
-__version__ = "0.0.999"
+__version__ = "1.0.0"
 __XBMC_Revision__ = ""
 
 def addPadding(number):

@@ -4,6 +4,8 @@ import time
 import threading
 import os
 
+__language__ = xbmc.Language( os.getcwd() ).getLocalizedString
+
 EXIT_SCRIPT = ( 6, 10, 247, 275, 61467, 216, 257, 61448, )
 CANCEL_DIALOG = EXIT_SCRIPT + ( 216, 257, 61448, 61467 ,)
 
@@ -12,7 +14,6 @@ CONTROL_DONTSHOW_BUTTON = 1007
 CONTROL_HEADER_TEXT = 3001
 CONTROL_MESSAGE_TEXT = 3002
 
-__language__ = xbmc.Language( os.getcwd() ).getLocalizedString
 
 class GUI( xbmcgui.WindowXMLDialog ):
     class CloseCounter(threading.Thread):
