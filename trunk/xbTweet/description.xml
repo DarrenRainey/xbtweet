@@ -20,21 +20,21 @@
     <type>4</type>
 
     <!-- (required) Title -->
-    <title>xbTweet</title>
+    <title>xbtweet</title>
 
     <!-- (required) Major.minor.build -->
-    <version>0.0.903</version>
+    <version>1.0.0</version>
 
     <!-- (required) author name & email.  at least one author name is required -->
     <authors>
-        <author name="Itay Weinberger" email="itay.weinberger@gmail.com" />
+        <author name="Itay Weinberger" email="admin@xbmcblog.com" />
     </authors>
 
     <!-- (required) Short description of addon. -->
     <summary>XBMC Interface for Twitter</summary>
 
     <!-- Longer descrption of addon.  Usage instructions should go here if required. -->
-    <description>xbTweet is a small script that works with your XBMC to tweet what you're playing</description>
+    <description>xbtweet is a small script that works with your XBMC to tweet what you're playing</description>
 
     <!-- user defined tags e.g. <tags><tag>Example</tag></tags> -->
     <tags>

@@ -28,8 +28,8 @@ password = __settings__.getSetting( "Password" )
 username2 = __settings__.getSetting( "Username2" )
 password2 = __settings__.getSetting( "Password2" )
 
-consumer_key = "cpAC0s1CtNpVd7lP30Q2tg"
-consumer_secret = "8bV5un2RxuMeEBdrlYafVZo8F4pIgR8hxXjf1457L80"
+consumer_key = "DZNQQn5IMqm9ZVuSXP1PA"
+consumer_secret = "J5pSQgZyIw3NB69OE3bcmD3oJU5yfaQYUFcoSiIPA"
 
 lasttweet = ""
 
@@ -287,8 +287,8 @@ def UpdateStatus(update, Manual=False):
             return None
         try:
             update = api.update_status(update)
-            twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'default', 'media', 'smalltwitter.png' ) )
-            xbmc.executebuiltin('Notification(xbTweet,' + __language__(30050) + ',2000,' + twittersmallicon + ')')
+            twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'Default', 'media', 'smalltwitter.png' ) )
+            xbmc.executebuiltin('Notification(xbTweet,' + __language__(30050).encode( "utf-8", "ignore" ) + ',2000,' + twittersmallicon + ')')
         except TweepError, (strerror):
             Debug ('Twitter API error: {' + str(strerror) + '}', True)
         except:

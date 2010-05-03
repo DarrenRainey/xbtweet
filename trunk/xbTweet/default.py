@@ -9,7 +9,7 @@ import ConfigParser
 import string
 
 ###General vars
-__scriptname__ = "xbTweet"
+__scriptname__ = "xbtweet"
 __author__ = "Itay Weinberger"
 __url__ = "http://www.xbmcblog.com/xbTweet"
 __svn_url__ = "http://xbmc-addons.googlecode.com/svn/trunk/scripts/xbTweet/"
@@ -337,8 +337,8 @@ if (bShortcut): bRun = False
 if ((bStartup and bAutoStart) or bRun):
     Debug(  'Entering idle state, waiting for media playing...', False)
 
-    twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'default', 'media', 'smalltwitter.png' ) )
-    xbmc.executebuiltin('Notification(xbTweet,' + __language__(30044) + ',3000,' + twittersmallicon + ')')
+    twittersmallicon = xbmc.translatePath( os.path.join( MEDIA_RESOURCE_PATH, 'Default', 'media', 'smalltwitter.png' ) )
+    xbmc.executebuiltin('Notification(xbTweet,' + __language__(30044).encode( "utf-8", "ignore" ) + ',3000,' + twittersmallicon + ')')
     
     #we need the last id
     lastid = 0
