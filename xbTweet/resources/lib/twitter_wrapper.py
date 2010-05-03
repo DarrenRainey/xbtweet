@@ -139,7 +139,7 @@ def Twitter_Login(bWhichAccount = False):
         username2 = __settings__.getSetting( "Username2" )
         password2 = __settings__.getSetting( "Password2" )
         
-        if (bWhichAccount):
+        if (bWhichAccount and bUseAnotherAccount):
             username = username2
             password = password2
         Debug( 'Using Plain Authentication, ' + username + ':' + password, True)
@@ -154,7 +154,7 @@ def Twitter_Login(bWhichAccount = False):
         except:
             Debug( 'Exception: Login: ' + str(sys.exc_info()[1]), True)
             ShowMessage(40002)
-            __settings__.openSettings()
+            #__settings__.openSettings()
             return False, False
 
         bVerified, sError = VerifyAuthentication(api)
