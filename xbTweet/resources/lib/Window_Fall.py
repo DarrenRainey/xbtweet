@@ -26,7 +26,7 @@ WINDOW_START = 5
 WINDOW_WIDTH = 650
 WINDOW_HEIGHT = 100
 
-MEDIA_RESOURCE_PATH = xbmc.translatePath( 'special://home/scripts/xbtweet/resources/skins/default/media' )
+MEDIA_RESOURCE_PATH = xbmc.translatePath( 'special://home/scripts/xbtweet/resources/skins/Default/media' )
 
 SKIN_WIDTH = 650
 

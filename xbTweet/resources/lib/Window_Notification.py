@@ -22,7 +22,7 @@ LINE_CHARS = 70
 MAX_LINE_CHARS = 75
 CLOSE_TIMEOUT = 6
 
-MEDIA_RESOURCE_PATH = xbmc.translatePath( 'special://home/scripts/xbtweet/resources/skins/default/media' )
+MEDIA_RESOURCE_PATH = xbmc.translatePath( 'special://home/scripts/xbtweet/resources/skins/Default/media' )
 
 
 ### The adding button Code  (only really need this bit)
